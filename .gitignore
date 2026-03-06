@@ -1,0 +1,36 @@
+# Environment variables（機密情報保護）
+.env
+.env.local
+.env.production
+.env*.local
+
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+
+# Tauri
+src-tauri/target/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Playwright
+playwright-report/
+test-results/
+
+# Logs
+*.log
+
+# Coverage
+coverage/
+
+# Temp
+.appgenius_temp/
