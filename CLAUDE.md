@@ -65,3 +65,21 @@
 - Tauri v2: WebView2（Windows）/ WKWebView（macOS）を使用。Electronより5-7倍軽量
 - Canvas描画: requestAnimationFrame + devicePixelRatio でRetina対応必須
 - ResizeObserver でリサイズ対応（window.resize より正確）
+
+## CI/CD設定
+
+### GitHub Actions（PR時に自動実行）
+| チェック | コマンド |
+|---------|---------|
+| TypeScript | `npx tsc --noEmit` |
+| Lint | `npm run lint` |
+| Build | `npm run build` |
+
+### ブランチ戦略
+- `main`: 本番環境
+- `develop`: 開発統合ブランチ
+- `feature/*`: 機能開発ブランチ
+
+### リポジトリ
+- URL: https://github.com/miharushiga/mirai-clock
+- 公開設定: Private
