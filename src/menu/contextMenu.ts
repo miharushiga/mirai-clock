@@ -3,6 +3,7 @@ import { CheckMenuItem } from "@tauri-apps/api/menu";
 import { MenuItem } from "@tauri-apps/api/menu";
 import { PredefinedMenuItem } from "@tauri-apps/api/menu";
 import { getCurrentWindow } from "@tauri-apps/api/window";
+import { listen } from "@tauri-apps/api/event";
 import { load } from "@tauri-apps/plugin-store";
 
 const STORE_PATH = "settings.json";
@@ -41,6 +42,11 @@ export async function initAlwaysOnTop(): Promise<void> {
   if (alwaysOnTopState) {
     await getCurrentWindow().setAlwaysOnTop(true);
   }
+
+  await listen<boolean>("always-on-top-changed", (event) => {
+    alwaysOnTopState = event.payload;
+    void saveAlwaysOnTop(alwaysOnTopState);
+  });
 }
 
 export async function showContextMenu(): Promise<void> {

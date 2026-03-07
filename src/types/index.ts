@@ -35,3 +35,8 @@ export interface CenterMediaConfig {
   type: "image" | "video" | "none";
   src: string | null;
 }
+
+export interface RepdigitCountdown {
+  secondsLeft: number;
+  targetLabel: string;
+}

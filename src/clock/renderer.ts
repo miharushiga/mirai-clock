@@ -1,4 +1,4 @@
-import type { ClockState, RingRotations } from "../types";
+import type { ClockState, RingRotations, RepdigitCountdown } from "../types";
 
 const TWO_PI = Math.PI * 2;
 const HALF_PI = Math.PI / 2;
@@ -9,6 +9,96 @@ const SECOND_COUNT = 60;
 const RING_COLOR = "rgba(139, 90, 43, 0.15)";
 const NEEDLE_COLOR = "rgba(80, 40, 15, 0.85)";
 const NEEDLE_DOT_COLOR = "rgba(100, 50, 20, 0.9)";
+
+const PERFECT_REPDIGITS = [
+  { hours: 0, minutes: 0 },
+  { hours: 11, minutes: 11 },
+  { hours: 22, minutes: 22 },
+];
+const COUNTDOWN_SEC = 30;
+
+export function isRepdigitTime(state: ClockState): boolean {
+  return state.hours === state.minutes;
+}
+
+export function isPerfectRepdigit(state: ClockState): boolean {
+  return PERFECT_REPDIGITS.some(
+    t => t.hours === state.hours && t.minutes === state.minutes,
+  );
+}
+
+export function getRepdigitCountdown(state: ClockState): RepdigitCountdown | null {
+  const nowSec = state.hours * 3600 + state.minutes * 60 + state.seconds;
+  let best: RepdigitCountdown | null = null;
+
+  for (const t of PERFECT_REPDIGITS) {
+    let diff = t.hours * 3600 + t.minutes * 60 - nowSec;
+    if (diff <= 0) diff += 86400;
+    if (diff <= COUNTDOWN_SEC && (!best || diff < best.secondsLeft)) {
+      const label = `${String(t.hours).padStart(2, "0")}:${String(t.minutes).padStart(2, "0")}`;
+      best = { secondsLeft: diff, targetLabel: label };
+    }
+  }
+  return best;
+}
+
+export function drawRepdigitGlow(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  radius: number,
+  ms: number,
+  perfect: boolean,
+): void {
+  const speed = perfect ? 600 : 800;
+  const pulse = 0.5 + 0.5 * Math.sin(ms / speed);
+  const base = perfect ? 0.10 : 0.06;
+  const range = perfect ? 0.14 : 0.09;
+  const alpha = base + pulse * range;
+
+  const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius * 1.1);
+  gradient.addColorStop(0, `rgba(255, 210, 80, ${alpha * 1.4})`);
+  gradient.addColorStop(0.4, `rgba(255, 180, 60, ${alpha})`);
+  gradient.addColorStop(0.75, `rgba(255, 160, 40, ${alpha * 0.5})`);
+  gradient.addColorStop(1, "rgba(255, 140, 30, 0)");
+
+  ctx.save();
+  ctx.globalCompositeOperation = "screen";
+  ctx.fillStyle = gradient;
+  ctx.fillRect(cx - radius * 1.1, cy - radius * 1.1, radius * 2.2, radius * 2.2);
+  ctx.restore();
+}
+
+export function drawRepdigitCountdown(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  radius: number,
+  countdown: RepdigitCountdown,
+  ms: number,
+): void {
+  const { secondsLeft, targetLabel } = countdown;
+  const urgency = 1 - secondsLeft / COUNTDOWN_SEC;
+  const pulse = 0.7 + 0.3 * Math.sin(ms / (250 + 450 * (1 - urgency)));
+  const alpha = (0.35 + urgency * 0.55) * pulse;
+
+  const labelSize = Math.max(9, radius * 0.065);
+  const numSize = Math.max(14, radius * 0.12);
+  const labelY = cy + radius * 0.04;
+  const numY = cy + radius * 0.17;
+
+  ctx.save();
+  ctx.font = `500 ${labelSize}px "SF Mono","Menlo","Consolas",monospace`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillStyle = `rgba(180, 120, 40, ${alpha * 0.8})`;
+  ctx.fillText(targetLabel, cx, labelY);
+
+  ctx.font = `700 ${numSize}px "SF Mono","Menlo","Consolas",monospace`;
+  ctx.fillStyle = `rgba(200, 140, 50, ${alpha})`;
+  ctx.fillText(String(secondsLeft), cx, numY);
+  ctx.restore();
+}
 
 export function getCurrentClockState(): ClockState {
   const now = new Date();

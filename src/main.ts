@@ -10,6 +10,11 @@ import {
   drawSecondRing,
   drawNeedle,
   drawTimeWindows,
+  isRepdigitTime,
+  isPerfectRepdigit,
+  getRepdigitCountdown,
+  drawRepdigitGlow,
+  drawRepdigitCountdown,
 } from "./clock/renderer";
 import { drawBackground } from "./clock/background";
 import { drawCenterMedia } from "./clock/centerMedia";
@@ -43,6 +48,8 @@ function render(): void {
   const state = getCurrentClockState();
   const rotations = calculateRingRotations(state);
 
+  const now = performance.now();
+
   drawBackground(ctx, width, height);
   drawRingBorders(ctx, cx, cy, radius);
   drawNowIndicator(ctx, cx, cy, radius);
@@ -50,6 +57,16 @@ function render(): void {
   drawMinuteRing(ctx, cx, cy, radius, rotations.minute);
   drawSecondRing(ctx, cx, cy, radius, rotations.second);
   drawCenterMedia(ctx, cx, cy, radius * 0.30);
+
+  const countdown = getRepdigitCountdown(state);
+  if (countdown) {
+    drawRepdigitCountdown(ctx, cx, cy, radius, countdown, now);
+  }
+
+  if (isRepdigitTime(state)) {
+    drawRepdigitGlow(ctx, cx, cy, radius, now, isPerfectRepdigit(state));
+  }
+
   drawNeedle(ctx, cx, cy, radius);
   drawTimeWindows(ctx, cx, cy, radius, state);
 }

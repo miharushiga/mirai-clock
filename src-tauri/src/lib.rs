@@ -6,12 +6,25 @@ use tauri::{
 use tauri_plugin_store::StoreExt;
 
 fn setup_tray(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
+    let stored_on_top = app
+        .store("settings.json")
+        .ok()
+        .and_then(|store| store.get("alwaysOnTop"))
+        .and_then(|v| v.as_bool())
+        .unwrap_or(false);
+
+    if stored_on_top {
+        if let Some(window) = app.get_webview_window("main") {
+            let _ = window.set_always_on_top(true);
+        }
+    }
+
     let always_on_top = CheckMenuItem::with_id(
         app,
         "always_on_top",
         "常に最前面に表示",
         true,
-        false,
+        stored_on_top,
         None::<&str>,
     )?;
     let toggle_visible =
