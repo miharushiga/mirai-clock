@@ -5,7 +5,7 @@
   "identifier": "com.mirai-clock.app",
   "build": {
     "frontendDist": "../dist",
-    "devUrl": "http://localhost:3847"
+    "devUrl": "http://localhost:3848"
   },
   "app": {
     "windows": [

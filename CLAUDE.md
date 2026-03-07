@@ -19,7 +19,7 @@
   settings: tauri-plugin-store
 
 ポート設定:
-  frontend: 3847（Vite dev server）
+  frontend: 3848（Vite dev server）
 
 ## 環境変数
 

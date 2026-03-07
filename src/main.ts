@@ -1,81 +1,57 @@
 import "./style.css";
 import type { CanvasDimensions } from "./types";
-import { getCurrentClockState, calculateDialAngle } from "./clock/renderer";
+import {
+  getCurrentClockState,
+  calculateRingRotations,
+  drawRingBorders,
+  drawNowIndicator,
+  drawHourRing,
+  drawMinuteRing,
+  drawSecondRing,
+  drawNeedle,
+  drawTimeWindows,
+} from "./clock/renderer";
+import { drawBackground } from "./clock/background";
+import { drawCenterMedia } from "./clock/centerMedia";
+import { initAlwaysOnTop, showContextMenu } from "./menu/contextMenu";
 
 const canvas = document.getElementById("clock-canvas") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d")!;
 
-function getCanvasDimensions(): CanvasDimensions {
+let dimensions: CanvasDimensions = { width: 0, height: 0, dpr: 1 };
+
+function updateDimensions(): CanvasDimensions {
   const dpr = window.devicePixelRatio || 1;
   const rect = canvas.getBoundingClientRect();
-  return { width: rect.width, height: rect.height, dpr };
+  dimensions = { width: rect.width, height: rect.height, dpr };
+  return dimensions;
 }
 
 function resizeCanvas(): void {
-  const { width, height, dpr } = getCanvasDimensions();
+  const { width, height, dpr } = updateDimensions();
   canvas.width = width * dpr;
   canvas.height = height * dpr;
-  ctx.scale(dpr, dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
 function render(): void {
-  const { width, height } = getCanvasDimensions();
-  const centerX = width / 2;
-  const centerY = height / 2;
-  const radius = Math.min(centerX, centerY) * 0.8;
-
-  ctx.clearRect(0, 0, width, height);
-
-  ctx.beginPath();
-  ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-  ctx.strokeStyle = "#334155";
-  ctx.lineWidth = 2;
-  ctx.stroke();
-
-  ctx.beginPath();
-  ctx.arc(centerX, centerY, 4, 0, Math.PI * 2);
-  ctx.fillStyle = "#e2e8f0";
-  ctx.fill();
+  const { width, height } = dimensions;
+  const cx = width / 2;
+  const cy = height / 2;
+  const radius = Math.min(cx, cy) * 0.85;
 
   const state = getCurrentClockState();
+  const rotations = calculateRingRotations(state);
 
-  const hourAngle = calculateDialAngle(
-    state.hours % 12 + state.minutes / 60,
-    12,
-  );
-  drawHand(centerX, centerY, hourAngle, radius * 0.5, 4, "#e2e8f0");
-
-  const minuteAngle = calculateDialAngle(
-    state.minutes + state.seconds / 60,
-    60,
-  );
-  drawHand(centerX, centerY, minuteAngle, radius * 0.7, 2, "#94a3b8");
-
-  const secondAngle = calculateDialAngle(
-    state.seconds + state.milliseconds / 1000,
-    60,
-  );
-  drawHand(centerX, centerY, secondAngle, radius * 0.85, 1, "#3b82f6");
-}
-
-function drawHand(
-  cx: number,
-  cy: number,
-  angle: number,
-  length: number,
-  width: number,
-  color: string,
-): void {
-  ctx.beginPath();
-  ctx.moveTo(cx, cy);
-  ctx.lineTo(
-    cx + Math.cos(angle) * length,
-    cy + Math.sin(angle) * length,
-  );
-  ctx.strokeStyle = color;
-  ctx.lineWidth = width;
-  ctx.lineCap = "round";
-  ctx.stroke();
+  drawBackground(ctx, width, height);
+  drawRingBorders(ctx, cx, cy, radius);
+  drawNowIndicator(ctx, cx, cy, radius);
+  drawHourRing(ctx, cx, cy, radius, rotations.hour);
+  drawMinuteRing(ctx, cx, cy, radius, rotations.minute);
+  drawSecondRing(ctx, cx, cy, radius, rotations.second);
+  drawCenterMedia(ctx, cx, cy, radius * 0.30);
+  drawNeedle(ctx, cx, cy, radius);
+  drawTimeWindows(ctx, cx, cy, radius, state);
 }
 
 function tick(): void {
@@ -91,3 +67,10 @@ observer.observe(canvas);
 
 resizeCanvas();
 tick();
+
+document.addEventListener("contextmenu", (e) => {
+  e.preventDefault();
+  void showContextMenu();
+});
+
+void initAlwaysOnTop();

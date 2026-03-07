@@ -11,10 +11,27 @@ export interface CanvasDimensions {
   dpr: number;
 }
 
+export interface RingRotations {
+  hour: number;
+  minute: number;
+  second: number;
+}
+
+export interface BackgroundConfig {
+  imagePath: string | null;
+  fallbackColor: string;
+}
+
 export interface UserSettings {
-  theme: "dark";
+  theme: "parchment";
+  alwaysOnTop: boolean;
 }
 
 export interface AppConfig {
   devUrl: string;
+}
+
+export interface CenterMediaConfig {
+  type: "image" | "video" | "none";
+  src: string | null;
 }
