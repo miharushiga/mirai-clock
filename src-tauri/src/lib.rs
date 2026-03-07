@@ -1,3 +1,4 @@
+use log::{error, info, warn};
 use tauri::{
     menu::{CheckMenuItem, Menu, MenuItem, PredefinedMenuItem},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
@@ -13,9 +14,13 @@ fn setup_tray(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
         .and_then(|v| v.as_bool())
         .unwrap_or(false);
 
+    info!("Loaded alwaysOnTop setting: {}", stored_on_top);
+
     if stored_on_top {
         if let Some(window) = app.get_webview_window("main") {
-            let _ = window.set_always_on_top(true);
+            if let Err(e) = window.set_always_on_top(true) {
+                warn!("Failed to set always on top: {}", e);
+            }
         }
     }
 
@@ -52,14 +57,21 @@ fn setup_tray(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
             "always_on_top" => {
                 if let Some(window) = app.get_webview_window("main") {
                     let current = window.is_always_on_top().unwrap_or(false);
-                    let _ = window.set_always_on_top(!current);
-                    let _ = window.emit("always-on-top-changed", !current);
+                    let new_state = !current;
+                    if let Err(e) = window.set_always_on_top(new_state) {
+                        error!("Failed to set always on top: {}", e);
+                    }
+                    if let Err(e) = window.emit("always-on-top-changed", new_state) {
+                        error!("Failed to emit always-on-top-changed: {}", e);
+                    }
+                    info!("Always on top toggled: {}", new_state);
                 }
             }
             "toggle_visible" => {
                 toggle_window_visibility(app);
             }
             "quit" => {
+                info!("Application quit requested");
                 save_store(app);
                 app.exit(0);
             }
@@ -67,45 +79,64 @@ fn setup_tray(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
         })
         .build(app)?;
 
+    info!("Tray icon initialized");
     Ok(())
 }
 
 fn toggle_window_visibility(app: &tauri::AppHandle) {
     if let Some(window) = app.get_webview_window("main") {
         if window.is_visible().unwrap_or(false) {
-            let _ = window.hide();
+            if let Err(e) = window.hide() {
+                warn!("Failed to hide window: {}", e);
+            }
         } else {
-            let _ = window.show();
-            let _ = window.set_focus();
+            if let Err(e) = window.show() {
+                warn!("Failed to show window: {}", e);
+            }
+            if let Err(e) = window.set_focus() {
+                warn!("Failed to set focus: {}", e);
+            }
         }
     }
 }
 
 fn save_store(app: &tauri::AppHandle) {
-    if let Ok(store) = app.store("settings.json") {
-        let _ = store.save();
+    match app.store("settings.json") {
+        Ok(store) => {
+            if let Err(e) = store.save() {
+                error!("Failed to save store: {}", e);
+            }
+        }
+        Err(e) => {
+            warn!("Failed to open store: {}", e);
+        }
     }
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    let log_level = if cfg!(debug_assertions) {
+        log::LevelFilter::Debug
+    } else {
+        log::LevelFilter::Warn
+    };
+
     let app = tauri::Builder::default()
         .plugin(tauri_plugin_store::Builder::default().build())
+        .plugin(
+            tauri_plugin_log::Builder::default()
+                .level(log_level)
+                .build(),
+        )
         .setup(|app| {
-            if cfg!(debug_assertions) {
-                app.handle().plugin(
-                    tauri_plugin_log::Builder::default()
-                        .level(log::LevelFilter::Info)
-                        .build(),
-                )?;
-            }
-
             setup_tray(app)?;
             Ok(())
         })
         .on_window_event(|window, event| {
             if let WindowEvent::CloseRequested { api, .. } = event {
-                let _ = window.hide();
+                if let Err(e) = window.hide() {
+                    warn!("Failed to hide window on close: {}", e);
+                }
                 api.prevent_close();
             }
         })

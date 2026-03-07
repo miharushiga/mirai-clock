@@ -44,6 +44,7 @@ function drawCoverImage(
   canvasWidth: number,
   canvasHeight: number,
 ): void {
+  if (img.height === 0 || canvasHeight === 0) return;
   const imgRatio = img.width / img.height;
   const canvasRatio = canvasWidth / canvasHeight;
 

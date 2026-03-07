@@ -77,6 +77,7 @@ function drawCoverSource(
   cy: number,
   innerRadius: number,
 ): void {
+  if (sourceW === 0 || sourceH === 0) return;
   const diameter = innerRadius * 2;
   const srcRatio = sourceW / sourceH;
   const dstRatio = 1;

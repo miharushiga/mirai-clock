@@ -20,8 +20,20 @@ import { drawBackground } from "./clock/background";
 import { drawCenterMedia } from "./clock/centerMedia";
 import { initAlwaysOnTop, showContextMenu } from "./menu/contextMenu";
 
+window.addEventListener("unhandledrejection", (event) => {
+  console.error("[未来時計] Unhandled rejection:", event.reason);
+});
+
+window.addEventListener("error", (event) => {
+  console.error("[未来時計] Uncaught error:", event.error);
+});
+
 const canvas = document.getElementById("clock-canvas") as HTMLCanvasElement;
-const ctx = canvas.getContext("2d")!;
+const ctxOrNull = canvas.getContext("2d");
+if (!ctxOrNull) {
+  throw new Error("Failed to get 2D rendering context");
+}
+const ctx: CanvasRenderingContext2D = ctxOrNull;
 
 let dimensions: CanvasDimensions = { width: 0, height: 0, dpr: 1 };
 
@@ -72,7 +84,11 @@ function render(): void {
 }
 
 function tick(): void {
-  render();
+  try {
+    render();
+  } catch (e) {
+    console.error("[未来時計] Render error:", e);
+  }
   requestAnimationFrame(tick);
 }
 

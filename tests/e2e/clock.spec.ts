@@ -1472,7 +1472,7 @@ test('E2E-CLK-008: Retina対応（高DPIディスプレイで鮮明描画）', a
   }
 });
 
-test.only('E2E-CLK-009: アニメーションフレームレート', async ({ page }) => {
+test('E2E-CLK-009: アニメーションフレームレート', async ({ page }) => {
   await test.step('ページ遷移と安定待機', async () => {
     await page.goto('/');
     await page.waitForLoadState('domcontentloaded');

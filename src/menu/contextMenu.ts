@@ -16,60 +16,86 @@ async function getStore() {
 }
 
 async function loadAlwaysOnTop(): Promise<boolean> {
-  const store = await getStore();
-  const value = await store.get<boolean>(STORE_KEY);
-  return value ?? false;
+  try {
+    const store = await getStore();
+    const value = await store.get<boolean>(STORE_KEY);
+    return typeof value === "boolean" ? value : false;
+  } catch (e) {
+    console.error("[未来時計] Failed to load alwaysOnTop:", e);
+    return false;
+  }
 }
 
 async function saveAlwaysOnTop(value: boolean): Promise<void> {
-  const store = await getStore();
-  await store.set(STORE_KEY, value);
-  await store.save();
+  try {
+    const store = await getStore();
+    await store.set(STORE_KEY, value);
+    await store.save();
+  } catch (e) {
+    console.error("[未来時計] Failed to save alwaysOnTop:", e);
+  }
 }
 
 async function handleAlwaysOnTopToggle(): Promise<void> {
-  alwaysOnTopState = !alwaysOnTopState;
-  await getCurrentWindow().setAlwaysOnTop(alwaysOnTopState);
-  await saveAlwaysOnTop(alwaysOnTopState);
+  try {
+    alwaysOnTopState = !alwaysOnTopState;
+    await getCurrentWindow().setAlwaysOnTop(alwaysOnTopState);
+    await saveAlwaysOnTop(alwaysOnTopState);
+  } catch (e) {
+    console.error("[未来時計] Failed to toggle alwaysOnTop:", e);
+    alwaysOnTopState = !alwaysOnTopState;
+  }
 }
 
 async function handleQuit(): Promise<void> {
-  await getCurrentWindow().close();
+  try {
+    await getCurrentWindow().close();
+  } catch (e) {
+    console.error("[未来時計] Failed to close window:", e);
+  }
 }
 
 export async function initAlwaysOnTop(): Promise<void> {
-  alwaysOnTopState = await loadAlwaysOnTop();
-  if (alwaysOnTopState) {
-    await getCurrentWindow().setAlwaysOnTop(true);
-  }
+  try {
+    alwaysOnTopState = await loadAlwaysOnTop();
+    if (alwaysOnTopState) {
+      await getCurrentWindow().setAlwaysOnTop(true);
+    }
 
-  await listen<boolean>("always-on-top-changed", (event) => {
-    alwaysOnTopState = event.payload;
-    void saveAlwaysOnTop(alwaysOnTopState);
-  });
+    await listen<boolean>("always-on-top-changed", (event) => {
+      alwaysOnTopState = event.payload;
+      void saveAlwaysOnTop(alwaysOnTopState);
+    });
+  } catch (e) {
+    console.error("[未来時計] Failed to init alwaysOnTop:", e);
+  }
 }
 
 export async function showContextMenu(): Promise<void> {
-  const alwaysOnTopItem = await CheckMenuItem.new({
-    id: "always-on-top",
-    text: "常に最前面に表示",
-    checked: alwaysOnTopState,
-    action: () => { void handleAlwaysOnTopToggle(); },
-  });
+  try {
+    const alwaysOnTopItem = await CheckMenuItem.new({
+      id: "always-on-top",
+      text: "常に最前面に表示",
+      checked: alwaysOnTopState,
+      action: () => { void handleAlwaysOnTopToggle(); },
+    });
 
-  const separator = await PredefinedMenuItem.new({
-    item: "Separator",
-  });
+    const separator = await PredefinedMenuItem.new({
+      item: "Separator",
+    });
 
-  const quitItem = await MenuItem.new({
-    id: "quit",
-    text: "終了",
-    action: () => { void handleQuit(); },
-  });
+    const quitItem = await MenuItem.new({
+      id: "quit",
+      text: "終了",
+      action: () => { void handleQuit(); },
+    });
 
-  const menu = await Menu.new({
-    items: [alwaysOnTopItem, separator, quitItem],
-  });
+    const menu = await Menu.new({
+      items: [alwaysOnTopItem, separator, quitItem],
+    });
 
-  await menu.popup();
+    await menu.popup();
+  } catch (e) {
+    console.error("[未来時計] Failed to show context menu:", e);
+  }
 }
