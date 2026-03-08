@@ -40,3 +40,10 @@ export interface RepdigitCountdown {
   secondsLeft: number;
   targetLabel: string;
 }
+
+export type UpdateStatus = "checking" | "available" | "upToDate" | "error";
+
+export interface UpdateInfo {
+  status: UpdateStatus;
+  version?: string;
+}

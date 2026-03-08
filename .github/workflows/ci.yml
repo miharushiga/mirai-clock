@@ -19,6 +19,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Version consistency check
+        run: |
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          TAURI_VERSION=$(grep '^version' src-tauri/Cargo.toml | head -1 | sed 's/.*"\(.*\)"/\1/')
+          CONF_VERSION=$(node -p "require('./src-tauri/tauri.conf.json').version")
+          echo "package.json: $PKG_VERSION"
+          echo "Cargo.toml:   $TAURI_VERSION"
+          echo "tauri.conf:   $CONF_VERSION"
+          if [ "$PKG_VERSION" != "$TAURI_VERSION" ] || [ "$PKG_VERSION" != "$CONF_VERSION" ]; then
+            echo "::error::Version mismatch! All version fields must be identical."
+            exit 1
+          fi
+
       - name: TypeScript check
         run: npx tsc --noEmit
 

@@ -20,18 +20,33 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' asset: https://asset.localhost data: blob:"
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' asset: https://asset.localhost data: blob:; connect-src 'self' https://github.com https://api.github.com"
     }
   },
   "bundle": {
     "active": true,
     "targets": "all",
+    "createUpdaterArtifacts": true,
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
+    ],
+    "macOS": {
+      "signingIdentity": null
+    },
+    "windows": {
+      "signCommand": null
+    }
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDIzNjk3MEM4RUVFMTg4Q0UKUldUT2lPSHV5SEJwSXhwRjN1V1ZZcXNBN0NlSVFCb2g2WkdnUHhrcDFRVmhCbHFIQ1ZwQitzdlgK",
+      "endpoints": [
+        "https://github.com/miharushiga/mirai-clock/releases/latest/download/latest.json"
+      ]
+    }
   }
 }

@@ -19,6 +19,7 @@ import {
 import { drawBackground } from "./clock/background";
 import { drawCenterMedia } from "./clock/centerMedia";
 import { initAlwaysOnTop, showContextMenu } from "./menu/contextMenu";
+import { checkForUpdates } from "./updater";
 
 window.addEventListener("unhandledrejection", (event) => {
   console.error("[未来時計] Unhandled rejection:", event.reason);
@@ -107,3 +108,4 @@ document.addEventListener("contextmenu", (e) => {
 });
 
 void initAlwaysOnTop();
+void checkForUpdates();
