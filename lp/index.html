@@ -1,0 +1,2122 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>未来時計 - 未来があなたに向かってくる、世界にひとつだけの時計アプリ</title>
+  <meta name="description" content="開発費100万円超。世界のどこにも存在しない、未来が自分に向かってくる革命的な時計アプリを完全無料でプレゼント。ゾロ目のラッキータイミングを逃さない、最強の運気上昇ツール。">
+  <meta property="og:title" content="未来時計 - 未来があなたに向かってくる、世界にひとつだけの時計アプリ">
+  <meta property="og:description" content="開発費100万円超の革命的時計アプリを完全無料プレゼント。ゾロ目のラッキータイミングを逃さない、最強の運気上昇ツール。">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="未来時計 - 未来があなたに向かってくる">
+  <meta name="twitter:description" content="開発費100万円超の革命的時計アプリを完全無料プレゼント。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Noto+Serif+JP:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    /* ========================================
+       CSS Variables & Reset
+       ======================================== */
+    :root {
+      --gold: #d4a853;
+      --gold-light: #f0d68a;
+      --gold-dark: #a07830;
+      --bg-deep: #0a0a12;
+      --bg-section: #0f0f1a;
+      --bg-card: #161625;
+      --text-main: #e8e0d0;
+      --text-sub: #a09880;
+      --text-accent: #f5e6c8;
+      --glow-gold: rgba(212, 168, 83, 0.4);
+      --glow-blue: rgba(100, 149, 237, 0.3);
+      --parchment: #e8d5b0;
+      --parchment-dark: #c4a87a;
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background: var(--bg-deep);
+      color: var(--text-main);
+      line-height: 1.8;
+      overflow-x: hidden;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* ========================================
+       Utility
+       ======================================== */
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .section-spacing {
+      padding: 100px 0;
+    }
+
+    .text-center { text-align: center; }
+    .text-gold { color: var(--gold); }
+    .text-accent { color: var(--text-accent); }
+
+    .serif { font-family: 'Noto Serif JP', serif; }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ========================================
+       Hero Section
+       ======================================== */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 24px;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 50% 30%, rgba(212, 168, 83, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse at 50% 80%, rgba(100, 149, 237, 0.05) 0%, transparent 50%),
+        linear-gradient(180deg, #0a0a12 0%, #0d0d18 50%, #0a0a12 100%);
+      z-index: 0;
+    }
+
+    .hero > * { position: relative; z-index: 1; }
+
+    .hero-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+      color: #0a0a12;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      padding: 6px 20px;
+      border-radius: 100px;
+      margin-bottom: 32px;
+      text-transform: uppercase;
+    }
+
+    .hero-title {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(2.2rem, 6vw, 3.8rem);
+      font-weight: 900;
+      line-height: 1.3;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--parchment));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-subtitle {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(1rem, 2.8vw, 1.4rem);
+      color: var(--text-sub);
+      margin-bottom: 40px;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+    }
+
+    /* Clock Visual (CSS Animation) */
+    .clock-visual {
+      position: relative;
+      width: clamp(260px, 50vw, 360px);
+      height: clamp(260px, 50vw, 360px);
+      margin: 0 auto 48px;
+    }
+
+    .clock-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 2px solid;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .clock-ring--outer {
+      inset: 0;
+      border-color: rgba(212, 168, 83, 0.3);
+      animation: spin-reverse 120s linear infinite;
+      will-change: transform;
+    }
+
+    .clock-ring--middle {
+      inset: 15%;
+      border-color: rgba(212, 168, 83, 0.2);
+      animation: spin-reverse 40s linear infinite;
+      will-change: transform;
+    }
+
+    .clock-ring--inner {
+      inset: 30%;
+      border-color: rgba(212, 168, 83, 0.15);
+      animation: spin-reverse 15s linear infinite;
+      will-change: transform;
+    }
+
+    .clock-center {
+      position: absolute;
+      inset: 38%;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--parchment) 0%, var(--parchment-dark) 100%);
+      box-shadow:
+        0 0 30px var(--glow-gold),
+        0 0 60px rgba(212, 168, 83, 0.2),
+        inset 0 0 20px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .clock-center-text {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(0.7rem, 2vw, 1rem);
+      color: #5a3a1a;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .clock-needle {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 3px;
+      height: 50%;
+      background: linear-gradient(180deg, var(--gold) 0%, transparent 100%);
+      transform-origin: bottom center;
+      z-index: 5;
+    }
+
+    .clock-needle::before {
+      content: '';
+      position: absolute;
+      top: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-bottom: 14px solid var(--gold);
+    }
+
+    .clock-glow {
+      position: absolute;
+      inset: -20px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(212, 168, 83, 0.08) 0%, transparent 70%);
+      animation: pulse-glow 4s ease-in-out infinite;
+    }
+
+    .ring-numbers {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    .ring-number {
+      position: absolute;
+      font-family: 'Noto Serif JP', serif;
+      color: var(--gold);
+      font-size: 0.65rem;
+      opacity: 0.7;
+    }
+
+    @keyframes spin-reverse {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(-360deg); }
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 0.5; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.05); }
+    }
+
+    .hero-catch {
+      font-size: clamp(1rem, 2.5vw, 1.3rem);
+      color: var(--text-accent);
+      line-height: 2;
+      margin-bottom: 48px;
+      font-weight: 300;
+    }
+
+    .hero-catch strong {
+      color: var(--gold);
+      font-weight: 700;
+    }
+
+    .hero-cost {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(212, 168, 83, 0.08);
+      border: 1px solid rgba(212, 168, 83, 0.2);
+      border-radius: 12px;
+      padding: 16px 32px;
+      margin-bottom: 24px;
+    }
+
+    .hero-cost-label {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+    }
+
+    .hero-cost-value {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--gold);
+    }
+
+    .hero-cost-arrow {
+      font-size: 1.5rem;
+      color: var(--text-sub);
+    }
+
+    .hero-cost-free {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: #ff4444;
+      text-shadow: 0 0 20px rgba(255, 68, 68, 0.3);
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-sub);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    .scroll-indicator span {
+      display: block;
+      width: 1px;
+      height: 30px;
+      background: linear-gradient(180deg, var(--gold), transparent);
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(8px); }
+    }
+
+    /* ========================================
+       Problem Section
+       ======================================== */
+    .problem {
+      background: linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-section) 50%, var(--bg-deep) 100%);
+    }
+
+    .problem-question {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 60px;
+      line-height: 1.6;
+      color: var(--text-accent);
+    }
+
+    .problem-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-width: 600px;
+      margin: 0 auto 60px;
+    }
+
+    .problem-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 20px 24px;
+      background: rgba(255, 255, 255, 0.03);
+      border-left: 3px solid var(--gold-dark);
+      border-radius: 0 8px 8px 0;
+    }
+
+    .problem-icon {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      background: var(--gold);
+      color: #0a0a12;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .problem-text {
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    .problem-answer {
+      text-align: center;
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(1.2rem, 3vw, 1.6rem);
+      color: var(--gold);
+      font-weight: 700;
+      line-height: 2;
+    }
+
+    /* ========================================
+       Concept Section
+       ======================================== */
+    .concept {
+      background: var(--bg-deep);
+      position: relative;
+    }
+
+    .concept::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 50%, rgba(212, 168, 83, 0.04) 0%, transparent 70%);
+    }
+
+    .concept > .container { position: relative; z-index: 1; }
+
+    .concept-heading {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      font-weight: 900;
+      text-align: center;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .concept-sub {
+      text-align: center;
+      color: var(--text-sub);
+      font-size: 0.95rem;
+      margin-bottom: 60px;
+      letter-spacing: 0.05em;
+    }
+
+    .concept-block {
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+      margin-bottom: 60px;
+    }
+
+    .concept-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(212, 168, 83, 0.1);
+      border-radius: 16px;
+      padding: 40px 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .concept-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .concept-card-number {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 3rem;
+      font-weight: 900;
+      color: rgba(212, 168, 83, 0.1);
+      position: absolute;
+      top: 16px;
+      right: 24px;
+      line-height: 1;
+    }
+
+    .concept-card h3 {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 1.3rem;
+      color: var(--gold);
+      margin-bottom: 16px;
+      font-weight: 700;
+    }
+
+    .concept-card p {
+      color: var(--text-main);
+      font-size: 0.95rem;
+      line-height: 1.9;
+    }
+
+    /* ========================================
+       Personalize Section
+       ======================================== */
+    .personalize {
+      background: var(--bg-deep);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .personalize::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 40%, rgba(212, 168, 83, 0.05) 0%, transparent 60%);
+    }
+
+    .personalize > .container { position: relative; z-index: 1; }
+
+    .personalize-heading {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(1.6rem, 4.5vw, 2.6rem);
+      font-weight: 900;
+      text-align: center;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .personalize-sub {
+      text-align: center;
+      color: var(--text-sub);
+      font-size: 0.95rem;
+      margin-bottom: 60px;
+    }
+
+    /* Personalize Clock Demo */
+    .personalize-demo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 48px;
+      margin-bottom: 60px;
+    }
+
+    @media (min-width: 700px) {
+      .personalize-demo {
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 60px;
+      }
+    }
+
+    .personalize-clock {
+      position: relative;
+      width: 240px;
+      height: 240px;
+      flex-shrink: 0;
+    }
+
+    .personalize-clock .p-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 2px solid rgba(212, 168, 83, 0.25);
+    }
+
+    .personalize-clock .p-ring--outer {
+      inset: 0;
+      animation: spin-reverse 120s linear infinite;
+      will-change: transform;
+    }
+
+    .personalize-clock .p-ring--middle {
+      inset: 15%;
+      animation: spin-reverse 40s linear infinite;
+      will-change: transform;
+    }
+
+    .personalize-clock .p-ring--inner {
+      inset: 30%;
+      animation: spin-reverse 15s linear infinite;
+      will-change: transform;
+    }
+
+    .personalize-clock .p-center {
+      position: absolute;
+      inset: 34%;
+      border-radius: 50%;
+      overflow: hidden;
+      box-shadow:
+        0 0 30px var(--glow-gold),
+        0 0 60px rgba(212, 168, 83, 0.15);
+      border: 2px solid rgba(212, 168, 83, 0.4);
+    }
+
+    .personalize-clock .p-center-inner {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a1520, #2a1f30);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .personalize-slot {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      text-align: center;
+    }
+
+    .personalize-slot-icon {
+      font-size: 1.8rem;
+      margin-bottom: 2px;
+      animation: slot-cycle 12s ease-in-out infinite;
+    }
+
+    .personalize-slot-text {
+      font-size: 0.45rem;
+      color: var(--gold);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      opacity: 0.9;
+    }
+
+    @keyframes slot-cycle {
+      0%, 20%   { content: ''; }
+      25%, 45%  { content: ''; }
+      50%, 70%  { content: ''; }
+      75%, 95%  { content: ''; }
+    }
+
+    .personalize-clock .p-needle {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 2px;
+      height: 50%;
+      background: linear-gradient(180deg, var(--gold) 0%, transparent 100%);
+      z-index: 5;
+    }
+
+    .personalize-clock .p-needle::before {
+      content: '';
+      position: absolute;
+      top: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-bottom: 10px solid var(--gold);
+    }
+
+    .personalize-text {
+      max-width: 400px;
+    }
+
+    .personalize-text h3 {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(1.2rem, 3vw, 1.5rem);
+      color: var(--gold);
+      font-weight: 700;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .personalize-text p {
+      font-size: 0.95rem;
+      line-height: 2;
+      color: var(--text-main);
+      margin-bottom: 24px;
+    }
+
+    .personalize-text p strong {
+      color: var(--gold);
+    }
+
+    .personalize-examples {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .personalize-example {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: rgba(212, 168, 83, 0.05);
+      border-radius: 8px;
+      border-left: 3px solid var(--gold-dark);
+      font-size: 0.9rem;
+      color: var(--text-accent);
+    }
+
+    .personalize-example-icon {
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .personalize-question {
+      text-align: center;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .personalize-question p {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+      color: var(--text-accent);
+      line-height: 2.2;
+      margin-bottom: 20px;
+    }
+
+    .personalize-question p strong {
+      color: var(--gold);
+      font-weight: 900;
+    }
+
+    .personalize-question .personalize-punchline {
+      font-size: clamp(1.3rem, 3.5vw, 1.8rem);
+      font-weight: 900;
+      color: var(--gold);
+      line-height: 1.8;
+      margin-top: 32px;
+      padding: 32px 0;
+      border-top: 1px solid rgba(212, 168, 83, 0.15);
+      border-bottom: 1px solid rgba(212, 168, 83, 0.15);
+    }
+
+    /* ========================================
+       Features Section
+       ======================================== */
+    .features {
+      background: linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-section) 50%, var(--bg-deep) 100%);
+    }
+
+    .features-heading {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 900;
+      text-align: center;
+      margin-bottom: 16px;
+      color: var(--text-accent);
+    }
+
+    .features-sub {
+      text-align: center;
+      color: var(--text-sub);
+      font-size: 0.9rem;
+      margin-bottom: 60px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    @media (min-width: 600px) {
+      .feature-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(212, 168, 83, 0.08);
+      border-radius: 12px;
+      padding: 32px 24px;
+      text-align: center;
+      transition: border-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .feature-card:hover {
+      border-color: rgba(212, 168, 83, 0.25);
+      transform: translateY(-4px);
+    }
+
+    .feature-icon-wrap {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 20px;
+      background: rgba(212, 168, 83, 0.08);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+    }
+
+    .feature-card h3 {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 1.05rem;
+      color: var(--gold);
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .feature-card p {
+      font-size: 0.88rem;
+      color: var(--text-sub);
+      line-height: 1.7;
+    }
+
+    /* ========================================
+       Repdigit (ゾロ目) Section
+       ======================================== */
+    .repdigit {
+      background: var(--bg-deep);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .repdigit::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 30% 50%, rgba(212, 168, 83, 0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 50%, rgba(212, 168, 83, 0.04) 0%, transparent 50%);
+    }
+
+    .repdigit > .container { position: relative; z-index: 1; }
+
+    .repdigit-heading {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 900;
+      text-align: center;
+      margin-bottom: 16px;
+      color: var(--gold);
+    }
+
+    .repdigit-sub {
+      text-align: center;
+      color: var(--text-sub);
+      font-size: 0.9rem;
+      margin-bottom: 48px;
+    }
+
+    .repdigit-showcase {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+    }
+
+    .repdigit-time {
+      background: rgba(212, 168, 83, 0.06);
+      border: 1px solid rgba(212, 168, 83, 0.2);
+      border-radius: 12px;
+      padding: 20px 28px;
+      text-align: center;
+      min-width: 120px;
+    }
+
+    .repdigit-time-value {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--gold);
+      text-shadow: 0 0 20px var(--glow-gold);
+      letter-spacing: 0.1em;
+    }
+
+    .repdigit-time-label {
+      font-size: 0.75rem;
+      color: var(--text-sub);
+      margin-top: 4px;
+    }
+
+    .repdigit-desc {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto;
+      font-size: 1rem;
+      line-height: 2;
+      color: var(--text-main);
+    }
+
+    .repdigit-desc strong {
+      color: var(--gold);
+    }
+
+    .repdigit-countdown-demo {
+      text-align: center;
+      margin-top: 48px;
+      padding: 32px;
+      background: rgba(212, 168, 83, 0.04);
+      border-radius: 16px;
+      border: 1px solid rgba(212, 168, 83, 0.1);
+    }
+
+    .repdigit-countdown-demo p {
+      font-size: 0.9rem;
+      color: var(--text-sub);
+      margin-bottom: 12px;
+    }
+
+    .countdown-number {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 3rem;
+      font-weight: 900;
+      color: var(--gold);
+      text-shadow: 0 0 30px var(--glow-gold);
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+
+    .countdown-label {
+      font-size: 0.85rem;
+      color: var(--gold-dark);
+      margin-top: 8px;
+    }
+
+    .countdown-zero-text {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 1rem;
+      color: var(--gold);
+      margin-top: 8px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .countdown-zero-text.show {
+      opacity: 1;
+    }
+
+    /* Flash overlay on zero */
+    .repdigit-countdown-demo.flash {
+      animation: countdown-flash 1.8s ease-out;
+    }
+
+    @keyframes countdown-flash {
+      0%   { box-shadow: 0 0 0 0 rgba(212, 168, 83, 0); background: rgba(212, 168, 83, 0.04); }
+      8%   { box-shadow: 0 0 80px 30px rgba(212, 168, 83, 0.6); background: rgba(212, 168, 83, 0.2); }
+      20%  { box-shadow: 0 0 120px 50px rgba(212, 168, 83, 0.4); background: rgba(212, 168, 83, 0.12); }
+      50%  { box-shadow: 0 0 60px 15px rgba(212, 168, 83, 0.15); background: rgba(212, 168, 83, 0.06); }
+      100% { box-shadow: 0 0 0 0 rgba(212, 168, 83, 0); background: rgba(212, 168, 83, 0.04); }
+    }
+
+    /* ========================================
+       Value Section (Cost)
+       ======================================== */
+    .value {
+      background: linear-gradient(180deg, var(--bg-deep) 0%, #0d0810 50%, var(--bg-deep) 100%);
+    }
+
+    .value-heading {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(1.4rem, 3.5vw, 2rem);
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 48px;
+      color: var(--text-accent);
+      line-height: 1.6;
+    }
+
+    .value-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-width: 500px;
+      margin: 0 auto 48px;
+    }
+
+    .value-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 8px;
+    }
+
+    .value-row-label {
+      font-size: 0.9rem;
+      color: var(--text-sub);
+    }
+
+    .value-row-amount {
+      font-family: 'Noto Serif JP', serif;
+      font-weight: 700;
+      color: var(--text-accent);
+    }
+
+    .value-total {
+      border-top: 2px solid var(--gold);
+      padding-top: 24px;
+      text-align: center;
+      max-width: 500px;
+      margin: 0 auto 48px;
+    }
+
+    .value-total-label {
+      font-size: 0.9rem;
+      color: var(--text-sub);
+      margin-bottom: 8px;
+    }
+
+    .value-total-amount {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--gold);
+    }
+
+    .value-free-box {
+      text-align: center;
+      background: rgba(255, 68, 68, 0.05);
+      border: 2px solid rgba(255, 68, 68, 0.2);
+      border-radius: 16px;
+      padding: 40px 32px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    .value-free-label {
+      font-size: 1rem;
+      color: var(--text-sub);
+      margin-bottom: 8px;
+    }
+
+    .value-free-price {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(2.5rem, 8vw, 4rem);
+      font-weight: 900;
+      color: #ff4444;
+      text-shadow: 0 0 40px rgba(255, 68, 68, 0.3);
+      letter-spacing: 0.1em;
+    }
+
+    .value-free-note {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      margin-top: 12px;
+    }
+
+    /* ========================================
+       Why Free Section
+       ======================================== */
+    .why-free {
+      background: var(--bg-deep);
+    }
+
+    .why-free-heading {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(1.4rem, 3.5vw, 2rem);
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 48px;
+      color: var(--text-accent);
+    }
+
+    .why-free-content {
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .why-free-content p {
+      font-size: 1rem;
+      line-height: 2;
+      margin-bottom: 32px;
+      color: var(--text-main);
+    }
+
+    .why-free-content strong {
+      color: var(--gold);
+    }
+
+    .gift-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-top: 48px;
+    }
+
+    .gift-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(212, 168, 83, 0.15);
+      border-radius: 12px;
+      padding: 28px 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .gift-card-icon {
+      flex-shrink: 0;
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+    }
+
+    .gift-card-text h4 {
+      font-size: 1rem;
+      color: var(--gold);
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    .gift-card-text p {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      line-height: 1.6;
+      margin-bottom: 0;
+    }
+
+    /* ========================================
+       Philosophy Section
+       ======================================== */
+    .philosophy {
+      background: linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-section) 50%, var(--bg-deep) 100%);
+      position: relative;
+    }
+
+    .philosophy-quote {
+      max-width: 640px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .philosophy-quote blockquote {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(1.2rem, 3vw, 1.6rem);
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 2.2;
+      margin-bottom: 32px;
+      position: relative;
+      padding: 40px 0;
+    }
+
+    .philosophy-quote blockquote::before,
+    .philosophy-quote blockquote::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .philosophy-quote blockquote::before { top: 0; }
+    .philosophy-quote blockquote::after { bottom: 0; }
+
+    .philosophy-text {
+      font-size: 0.95rem;
+      line-height: 2.2;
+      color: var(--text-main);
+    }
+
+    .philosophy-text strong {
+      color: var(--gold);
+    }
+
+    /* ========================================
+       Tech Spec Section
+       ======================================== */
+    .tech {
+      background: var(--bg-deep);
+    }
+
+    .tech-heading {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(1.4rem, 3.5vw, 2rem);
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 48px;
+      color: var(--text-accent);
+    }
+
+    .tech-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    @media (min-width: 500px) {
+      .tech-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    .tech-item {
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 8px;
+      border-left: 2px solid rgba(212, 168, 83, 0.2);
+    }
+
+    .tech-item-label {
+      font-size: 0.75rem;
+      color: var(--text-sub);
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+
+    .tech-item-value {
+      font-size: 0.95rem;
+      color: var(--text-accent);
+      font-weight: 500;
+    }
+
+    /* ========================================
+       CTA Section
+       ======================================== */
+    .cta {
+      background: var(--bg-deep);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 50%, rgba(212, 168, 83, 0.06) 0%, transparent 60%);
+    }
+
+    .cta > .container { position: relative; z-index: 1; }
+
+    .cta-heading {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(1.6rem, 4.5vw, 2.6rem);
+      font-weight: 900;
+      text-align: center;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .cta-sub {
+      text-align: center;
+      color: var(--text-sub);
+      font-size: 0.95rem;
+      margin-bottom: 48px;
+      line-height: 1.8;
+    }
+
+    .cta-buttons {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 18px 48px;
+      border-radius: 100px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: none;
+      min-width: 300px;
+      text-align: center;
+    }
+
+    .cta-btn--primary {
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      color: #0a0a12;
+      box-shadow:
+        0 4px 20px var(--glow-gold),
+        0 0 40px rgba(212, 168, 83, 0.15);
+    }
+
+    .cta-btn--primary:hover {
+      transform: translateY(-2px);
+      box-shadow:
+        0 6px 30px var(--glow-gold),
+        0 0 60px rgba(212, 168, 83, 0.25);
+    }
+
+    .cta-btn--secondary {
+      background: transparent;
+      color: var(--gold);
+      border: 2px solid var(--gold);
+    }
+
+    .cta-btn--secondary:hover {
+      background: rgba(212, 168, 83, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .cta-note {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-sub);
+    }
+
+    /* ========================================
+       Footer
+       ======================================== */
+    .footer {
+      background: var(--bg-deep);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 40px 24px;
+      text-align: center;
+    }
+
+    .footer-logo {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 1.2rem;
+      color: var(--gold);
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .footer p {
+      font-size: 0.75rem;
+      color: var(--text-sub);
+    }
+
+    /* ========================================
+       Floating Particles
+       ======================================== */
+    .particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: var(--gold);
+      border-radius: 50%;
+      opacity: 0;
+      animation: float-particle linear infinite;
+      will-change: transform, opacity;
+    }
+
+    @keyframes float-particle {
+      0% { opacity: 0; transform: translateY(100vh) scale(0); }
+      10% { opacity: 0.6; }
+      90% { opacity: 0.6; }
+      100% { opacity: 0; transform: translateY(-10vh) scale(1); }
+    }
+
+    /* ========================================
+       Mid CTA
+       ======================================== */
+    .mid-cta {
+      text-align: center;
+      padding: 60px 0;
+      background: var(--bg-deep);
+    }
+
+    .mid-cta-text {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 1.1rem;
+      color: var(--text-sub);
+      margin-bottom: 24px;
+    }
+
+    /* ========================================
+       FAQ Section
+       ======================================== */
+    .faq {
+      background: linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-section) 50%, var(--bg-deep) 100%);
+    }
+
+    .faq-heading {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(1.4rem, 3.5vw, 2rem);
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 48px;
+      color: var(--text-accent);
+    }
+
+    .faq-list {
+      max-width: 600px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .faq-item {
+      background: var(--bg-card);
+      border: 1px solid rgba(212, 168, 83, 0.08);
+      border-radius: 12px;
+      padding: 24px 28px;
+    }
+
+    .faq-q {
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+    }
+
+    .faq-q::before {
+      content: 'Q. ';
+      font-family: 'Noto Serif JP', serif;
+      font-weight: 900;
+    }
+
+    .faq-a {
+      font-size: 0.9rem;
+      color: var(--text-main);
+      line-height: 1.8;
+    }
+
+    .faq-a::before {
+      content: 'A. ';
+      font-family: 'Noto Serif JP', serif;
+      font-weight: 900;
+      color: var(--text-sub);
+    }
+
+    /* ========================================
+       Responsive
+       ======================================== */
+    @media (max-width: 768px) {
+      .section-spacing { padding: 80px 0; }
+      .concept-card { padding: 32px 24px; }
+      .concept-card h3 { font-size: 1.15rem; }
+    }
+
+    @media (max-width: 480px) {
+      .section-spacing { padding: 60px 0; }
+      .hero { padding: 40px 16px; }
+      .container { padding: 0 16px; }
+      .hero-cost {
+        flex-direction: column;
+        gap: 8px;
+        padding: 16px 24px;
+      }
+      .repdigit-showcase { gap: 12px; }
+      .repdigit-time { min-width: 90px; padding: 16px 20px; }
+      .cta-btn { min-width: 100%; padding: 16px 32px; }
+      .gift-card { flex-direction: column; text-align: center; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .clock-ring, .clock-glow, .particle, .scroll-indicator, .countdown-number {
+        animation: none !important;
+      }
+      .fade-in { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Particles -->
+  <div class="particles" id="particles"></div>
+
+  <!-- ===================== HERO ===================== -->
+  <section class="hero">
+    <div class="hero-badge">世界初 ・ 特許級テクノロジー</div>
+
+    <div class="clock-visual">
+      <div class="clock-glow"></div>
+      <div class="clock-ring clock-ring--outer">
+        <div class="ring-numbers" id="hour-numbers"></div>
+      </div>
+      <div class="clock-ring clock-ring--middle"></div>
+      <div class="clock-ring clock-ring--inner"></div>
+      <div class="clock-needle"></div>
+      <div class="clock-center">
+        <span class="clock-center-text">未来時計</span>
+      </div>
+    </div>
+
+    <h1 class="hero-title">未来が、あなたに向かってくる。</h1>
+    <p class="hero-subtitle">世界にひとつだけの、革命的時計アプリ</p>
+
+    <p class="hero-catch">
+      あなたは時間を追いかけていませんか？<br>
+      この時計は違います。<br>
+      <strong>未来があなたのもとへ、流れてくるのです。</strong>
+    </p>
+
+    <div class="hero-cost">
+      <div>
+        <div class="hero-cost-label">開発コスト</div>
+        <div class="hero-cost-value">100万円超</div>
+      </div>
+      <div class="hero-cost-arrow">&rarr;</div>
+      <div>
+        <div class="hero-cost-label">あなたへの価格</div>
+        <div class="hero-cost-free">完全無料</div>
+      </div>
+    </div>
+
+    <div class="scroll-indicator">
+      SCROLL
+      <span></span>
+    </div>
+  </section>
+
+  <!-- ===================== PROBLEM ===================== -->
+  <section class="problem section-spacing">
+    <div class="container">
+      <h2 class="problem-question fade-in">
+        あなたは今、<br>こんなことを感じていませんか？
+      </h2>
+
+      <ul class="problem-list">
+        <li class="problem-item fade-in">
+          <div class="problem-icon">1</div>
+          <p class="problem-text">過去の失敗や後悔に引きずられて、前に進めない</p>
+        </li>
+        <li class="problem-item fade-in">
+          <div class="problem-icon">2</div>
+          <p class="problem-text">「なんとなく運が悪い」と感じる日が続いている</p>
+        </li>
+        <li class="problem-item fade-in">
+          <div class="problem-icon">3</div>
+          <p class="problem-text">ゾロ目や幸運のサインに気づいても、すぐに忘れてしまう</p>
+        </li>
+        <li class="problem-item fade-in">
+          <div class="problem-icon">4</div>
+          <p class="problem-text">自分の未来に対して、漠然とした不安がある</p>
+        </li>
+        <li class="problem-item fade-in">
+          <div class="problem-icon">5</div>
+          <p class="problem-text">毎日の生活に「特別な瞬間」がない</p>
+        </li>
+      </ul>
+
+      <p class="problem-answer fade-in">
+        その原因は、<br>
+        あなたの<strong>「時間の捉え方」</strong>にあるかもしれません。
+      </p>
+    </div>
+  </section>
+
+  <!-- ===================== CONCEPT ===================== -->
+  <section class="concept section-spacing">
+    <div class="container">
+      <h2 class="concept-heading fade-in">時間の常識を、覆す。</h2>
+      <p class="concept-sub fade-in">従来の時計が語らなかった、もうひとつの真実</p>
+
+      <div class="concept-block">
+        <div class="concept-card fade-in">
+          <div class="concept-card-number">01</div>
+          <h3>従来の時計 &#8212; あなたが過去を捨てて、未来へ向かう</h3>
+          <p>
+            普通の時計は、針が前に進みます。<br>
+            つまり「あなたが過去を置き去りにして、未来へ歩いていく」という世界観です。<br>
+            そこには常に、置いてきた過去への未練と、追いかける未来への焦りがあります。
+          </p>
+        </div>
+
+        <div class="concept-card fade-in">
+          <div class="concept-card-number">02</div>
+          <h3>未来時計 &#8212; 未来が、あなたに向かってくる</h3>
+          <p>
+            未来時計は、針は動きません。文字盤が回転します。<br>
+            あなたは動かなくていい。<strong>未来のほうから、あなたのもとへ流れてくるのです。</strong><br>
+            あなたが心に描いた未来は、必ずやってきます。<br>
+            過去にとらわれる必要はありません。未来を意識するだけで、その未来は手に入るのです。
+          </p>
+        </div>
+
+        <div class="concept-card fade-in">
+          <div class="concept-card-number">03</div>
+          <h3>24時間の未来が、常に見える</h3>
+          <p>
+            3層の同心円リングが、時・分・秒を同時に表示。<br>
+            24時間の文字盤が反時計回りに回転することで、これから訪れるすべての時間が視界に入ります。<br>
+            あなたの1日の未来が、文字通り「見える」のです。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PERSONALIZE ===================== -->
+  <section class="personalize section-spacing">
+    <div class="container">
+      <h2 class="personalize-heading fade-in">あなただけの時計を、<br>あなた仕様で。</h2>
+      <p class="personalize-sub fade-in">時計の中心に、あなたの「大切なもの」を宿す</p>
+
+      <div class="personalize-demo fade-in">
+        <!-- Mini clock with cycling center -->
+        <div class="personalize-clock">
+          <div class="p-ring p-ring--outer"></div>
+          <div class="p-ring p-ring--middle"></div>
+          <div class="p-ring p-ring--inner"></div>
+          <div class="p-needle"></div>
+          <div class="p-center">
+            <div class="p-center-inner">
+              <div class="personalize-slot">
+                <span class="personalize-slot-icon" id="slot-icon">&#128248;</span>
+                <span class="personalize-slot-text" id="slot-text">YOUR PHOTO</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="personalize-text">
+          <h3>時計の中心に、<br>あなたが「ずっと見ていたいもの」を。</h3>
+          <p>
+            未来時計の中央には、<strong>あなたの好きな画像</strong>を入れることができます。<br>
+            時間を見るたびに、あなたの大切なものが目に飛び込んでくる。<br>
+            そんな時計を、あなたは今まで見たことがありますか？
+          </p>
+
+          <div class="personalize-examples">
+            <div class="personalize-example">
+              <span class="personalize-example-icon">&#128104;&#8205;&#128105;&#8205;&#128103;&#8205;&#128102;</span>
+              <span>大切な家族や恋人の写真</span>
+            </div>
+            <div class="personalize-example">
+              <span class="personalize-example-icon">&#127749;</span>
+              <span>心に残る思い出の風景</span>
+            </div>
+            <div class="personalize-example">
+              <span class="personalize-example-icon">&#128161;</span>
+              <span>尊敬する偉人、憧れの人物</span>
+            </div>
+            <div class="personalize-example">
+              <span class="personalize-example-icon">&#128290;</span>
+              <span>あなたを導く幸運の数字</span>
+            </div>
+            <div class="personalize-example">
+              <span class="personalize-example-icon">&#127775;</span>
+              <span>夢や目標を象徴する画像</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="personalize-question fade-in">
+        <p>
+          あなたはご存知ですか？<br>
+          あなたは、そんな経験がありますか？<br><br>
+          <strong>自分だけのオリジナル時計を、自分仕様で作れる時計。</strong><br><br>
+          時計を見るだけで、未来への希望が湧き上がり、<br>
+          大切な人や夢を思い出し、心が満たされる。<br><br>
+          そんな時計、<strong>聞いたことも見たこともない</strong>はずです。
+        </p>
+        <p class="personalize-punchline">
+          でも、これは本当に存在します。<br>
+          しかも、無料で手に入るのです。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== REPDIGIT ===================== -->
+  <section class="repdigit section-spacing">
+    <div class="container">
+      <h2 class="repdigit-heading fade-in">幸運のタイミングを、絶対に逃さない。</h2>
+      <p class="repdigit-sub fade-in">ゾロ目 &#8212; 天使からのメッセージを、確実にキャッチ</p>
+
+      <div class="repdigit-showcase fade-in">
+        <div class="repdigit-time">
+          <div class="repdigit-time-value">00:00</div>
+          <div class="repdigit-time-label">リセット・新たな始まり</div>
+        </div>
+        <div class="repdigit-time">
+          <div class="repdigit-time-value">11:11</div>
+          <div class="repdigit-time-label">最強のエンジェルナンバー</div>
+        </div>
+        <div class="repdigit-time">
+          <div class="repdigit-time-value">22:22</div>
+          <div class="repdigit-time-label">願望成就の刻</div>
+        </div>
+      </div>
+
+      <p class="repdigit-desc fade-in">
+        ゾロ目の時刻は、天使からのメッセージ。<br>
+        それは<strong>あなたの波動が高まっているサイン</strong>であり、<br>
+        願いが叶う最高のタイミングです。<br><br>
+        未来時計は、その瞬間を<strong>ゴールドの光で包み込み</strong>、<br>
+        あなたに幸運の到来を知らせます。
+      </p>
+
+      <div class="repdigit-countdown-demo fade-in" id="countdown-box">
+        <p>パーフェクトゾロ目の30秒前から、カウントダウン開始</p>
+        <div class="countdown-number" id="countdown-demo">30</div>
+        <div class="countdown-label" id="countdown-label">幸運の瞬間まで、あと...</div>
+        <div class="countdown-zero-text" id="countdown-zero-text">&#10024; 幸運の瞬間が訪れました &#10024;</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== MID CTA ===================== -->
+  <section class="mid-cta">
+    <div class="container">
+      <p class="mid-cta-text fade-in">この体験を、今すぐ手に入れませんか？</p>
+      <a href="#cta-final" class="cta-btn cta-btn--primary fade-in">無料で未来時計を受け取る</a>
+    </div>
+  </section>
+
+  <!-- ===================== FEATURES ===================== -->
+  <section class="features section-spacing">
+    <div class="container">
+      <h2 class="features-heading fade-in">100万円超の開発費が生んだ、<br>唯一無二の機能たち</h2>
+      <p class="features-sub fade-in">すべてが、あなたの運気を上昇させるために設計されています</p>
+
+      <div class="feature-grid">
+        <div class="feature-card fade-in">
+          <div class="feature-icon-wrap">&#9201;</div>
+          <h3>3層リング構造</h3>
+          <p>時間・分・秒の3つの同心円が、それぞれ独立して回転。24時間すべての時間が一目で把握できる、圧倒的な視認性。</p>
+        </div>
+
+        <div class="feature-card fade-in">
+          <div class="feature-icon-wrap">&#10024;</div>
+          <h3>ゾロ目ゴールドグロー</h3>
+          <p>ゾロ目の時刻になると、画面全体がゴールドに輝くパルスエフェクト。幸運の瞬間を視覚で体感。</p>
+        </div>
+
+        <div class="feature-card fade-in">
+          <div class="feature-icon-wrap">&#8986;</div>
+          <h3>カウントダウン通知</h3>
+          <p>パーフェクトゾロ目（00:00・11:11・22:22）の30秒前からカウントダウン。幸運を「待ち構える」体験。</p>
+        </div>
+
+        <div class="feature-card fade-in">
+          <div class="feature-icon-wrap">&#128240;</div>
+          <h3>羊皮紙テクスチャ</h3>
+          <p>古代の叡智を思わせる羊皮紙風の質感。ノイズ・ビネット・折り目まで緻密に再現した、唯一無二のデザイン。</p>
+        </div>
+
+        <div class="feature-card fade-in">
+          <div class="feature-icon-wrap">&#128260;</div>
+          <h3>反時計回り回転</h3>
+          <p>文字盤が反時計回りに回転する、世界初の時計体験。未来があなたに向かってくる感覚を、毎秒体感できます。</p>
+        </div>
+
+        <div class="feature-card fade-in">
+          <div class="feature-icon-wrap">&#127912;</div>
+          <h3>60fps 滑らか描画</h3>
+          <p>ミリ秒単位の精密な連続アニメーション。Retina対応の高精細レンダリングで、美しさに妥協なし。</p>
+        </div>
+
+        <div class="feature-card fade-in">
+          <div class="feature-icon-wrap">&#128187;</div>
+          <h3>超軽量ネイティブ</h3>
+          <p>Tauri v2採用で、Electronの5〜7倍軽量。バッテリー消費を抑えながら、ネイティブアプリの快適さを実現。</p>
+        </div>
+
+        <div class="feature-card fade-in">
+          <div class="feature-icon-wrap">&#128274;</div>
+          <h3>完全プライベート</h3>
+          <p>データ収集一切なし。インターネット接続不要。あなたの時間は、あなただけのもの。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== VALUE ===================== -->
+  <section class="value section-spacing">
+    <div class="container">
+      <h2 class="value-heading fade-in">
+        もしあなたがこのアプリを<br>自分で作ろうとしたら？
+      </h2>
+
+      <div class="value-breakdown fade-in">
+        <div class="value-row">
+          <span class="value-row-label">UI/UXデザイン設計</span>
+          <span class="value-row-amount">¥200,000〜</span>
+        </div>
+        <div class="value-row">
+          <span class="value-row-label">Canvas描画エンジン開発</span>
+          <span class="value-row-amount">¥300,000〜</span>
+        </div>
+        <div class="value-row">
+          <span class="value-row-label">3層リング回転ロジック</span>
+          <span class="value-row-amount">¥150,000〜</span>
+        </div>
+        <div class="value-row">
+          <span class="value-row-label">ゾロ目検知・エフェクト</span>
+          <span class="value-row-amount">¥100,000〜</span>
+        </div>
+        <div class="value-row">
+          <span class="value-row-label">Rustバックエンド開発</span>
+          <span class="value-row-amount">¥200,000〜</span>
+        </div>
+        <div class="value-row">
+          <span class="value-row-label">テスト・品質保証</span>
+          <span class="value-row-amount">¥100,000〜</span>
+        </div>
+      </div>
+
+      <div class="value-total fade-in">
+        <div class="value-total-label">合計開発コスト</div>
+        <div class="value-total-amount">¥1,050,000〜</div>
+      </div>
+
+      <div class="value-free-box fade-in">
+        <div class="value-free-label">今回あなたにお届けする価格</div>
+        <div class="value-free-price">¥0</div>
+        <div class="value-free-note">完全無料 ・ 追加課金なし ・ 広告なし</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== WHY FREE ===================== -->
+  <section class="why-free section-spacing">
+    <div class="container">
+      <h2 class="why-free-heading fade-in">なぜ、100万円超のアプリを<br>無料で差し上げるのか</h2>
+
+      <div class="why-free-content fade-in">
+        <p>
+          それは、<strong>ひとりでも多くの人に「未来は自分で創れる」と気づいてほしいから</strong>です。
+        </p>
+        <p>
+          私たちは現在、2つの革新的なサービスを開発しています。<br>
+          どちらも無料でご利用いただけるサービスです。<br>
+          そのどちらかに登録していただくだけで、<br>
+          この未来時計を完全無料でプレゼントいたします。
+        </p>
+      </div>
+
+      <div class="gift-cards fade-in">
+        <div class="gift-card">
+          <div class="gift-card-icon">&#127908;</div>
+          <div class="gift-card-text">
+            <h4>音声入力システム（無料）に登録</h4>
+            <p>革新的な音声入力テクノロジーを、いち早くお届け。登録するだけで未来時計をプレゼント。</p>
+          </div>
+        </div>
+        <div class="gift-card">
+          <div class="gift-card-icon">&#129413;</div>
+          <div class="gift-card-text">
+            <h4>預言天狗アプリ（無料）に登録</h4>
+            <p>あなたの未来を照らす預言アプリ。登録するだけで未来時計をプレゼント。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PHILOSOPHY ===================== -->
+  <section class="philosophy section-spacing">
+    <div class="container">
+      <div class="philosophy-quote fade-in">
+        <blockquote>
+          過去にとらわれる必要はない。<br>
+          未来を夢見れば、<br>
+          未来を意識すれば、<br>
+          未来にこうなりたい、こうしたい、こうしようと思えば、<br>
+          必ずそれは得られる。
+        </blockquote>
+
+        <p class="philosophy-text">
+          未来時計は、単なる時計アプリではありません。<br><br>
+          <strong>あなたの人生の時間の捉え方を根本から変える</strong>ツールです。<br><br>
+          毎日、未来があなたに向かってくるのを見つめてください。<br>
+          ゾロ目のゴールドの光を受け取ってください。<br>
+          カウントダウンとともに、幸運を迎え入れてください。<br><br>
+          そうすることで、あなたの現実は変わり始めます。<br>
+          <strong>あなたが思い描いた未来が、必ず訪れます。</strong>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== TECH SPEC ===================== -->
+  <section class="tech section-spacing">
+    <div class="container">
+      <h2 class="tech-heading fade-in">技術仕様</h2>
+
+      <div class="tech-grid fade-in">
+        <div class="tech-item">
+          <div class="tech-item-label">フレームワーク</div>
+          <div class="tech-item-value">Tauri v2（Rust製）</div>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-label">描画エンジン</div>
+          <div class="tech-item-value">HTML5 Canvas / 60fps</div>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-label">フロントエンド</div>
+          <div class="tech-item-value">TypeScript（フレームワーク不使用）</div>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-label">ディスプレイ対応</div>
+          <div class="tech-item-value">Retina / 高DPI</div>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-label">アプリサイズ</div>
+          <div class="tech-item-value">Electronの5〜7倍軽量</div>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-label">データ通信</div>
+          <div class="tech-item-value">一切なし（完全オフライン）</div>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-label">対応OS</div>
+          <div class="tech-item-value">macOS / Windows</div>
+        </div>
+        <div class="tech-item">
+          <div class="tech-item-label">価格</div>
+          <div class="tech-item-value">永久無料（広告なし）</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FAQ ===================== -->
+  <section class="faq section-spacing">
+    <div class="container">
+      <h2 class="faq-heading fade-in">よくあるご質問</h2>
+
+      <div class="faq-list">
+        <div class="faq-item fade-in">
+          <p class="faq-q">本当に無料ですか？あとから課金されませんか？</p>
+          <p class="faq-a">はい、完全無料です。追加課金・アプリ内課金・広告は一切ありません。今後も永久に無料でお使いいただけます。</p>
+        </div>
+        <div class="faq-item fade-in">
+          <p class="faq-q">なぜこれほどのアプリを無料で配布するのですか？</p>
+          <p class="faq-a">ひとりでも多くの方に「未来は自分で創れる」と実感していただきたいからです。音声入力システムまたは預言天狗アプリという無料サービスへの登録をきっかけに、この価値を届けたいと考えています。</p>
+        </div>
+        <div class="faq-item fade-in">
+          <p class="faq-q">個人情報やデータが収集されることはありますか？</p>
+          <p class="faq-a">未来時計はインターネット接続を一切使用しません。データ通信ゼロの完全オフラインアプリです。あなたのプライバシーは完全に守られます。</p>
+        </div>
+        <div class="faq-item fade-in">
+          <p class="faq-q">どのデバイスで使えますか？</p>
+          <p class="faq-a">macOSとWindowsに対応しています。Tauri v2採用のネイティブアプリで、軽量かつ高速に動作します。</p>
+        </div>
+        <div class="faq-item fade-in">
+          <p class="faq-q">登録後の解約はできますか？</p>
+          <p class="faq-a">はい、音声入力システム・預言天狗アプリともに、いつでも自由に解約可能です。未来時計は解約後もそのままお使いいただけます。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CTA ===================== -->
+  <section class="cta section-spacing" id="cta-final">
+    <div class="container">
+      <h2 class="cta-heading fade-in">未来を、受け取る準備はできましたか？</h2>
+      <p class="cta-sub fade-in">
+        どちらかの無料サービスに登録するだけで、<br>
+        開発費100万円超の未来時計を、今すぐ手に入れられます。
+      </p>
+
+      <div class="cta-buttons fade-in">
+        <a href="#" class="cta-btn cta-btn--primary">
+          &#127908; 音声入力システムに無料登録して受け取る
+        </a>
+        <a href="#" class="cta-btn cta-btn--secondary">
+          &#129413; 預言天狗アプリに無料登録して受け取る
+        </a>
+      </div>
+
+      <p class="cta-note fade-in">
+        ※ どちらも完全無料です。クレジットカード不要。いつでも解約可能。
+      </p>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="footer-logo">未来時計</div>
+    <p>&copy; 2026 未来時計 All Rights Reserved.</p>
+  </footer>
+
+  <!-- ===================== JavaScript ===================== -->
+  <script>
+    // ========================================
+    // Scroll Fade-in Animation
+    // ========================================
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // ========================================
+    // Floating Particles
+    // ========================================
+    (function createParticles() {
+      const container = document.getElementById('particles');
+      const count = 12;
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.animationDuration = (8 + Math.random() * 12) + 's';
+        p.style.animationDelay = (Math.random() * 10) + 's';
+        p.style.width = p.style.height = (1 + Math.random() * 2) + 'px';
+        container.appendChild(p);
+      }
+    })();
+
+    // ========================================
+    // Hour Numbers on Outer Ring
+    // ========================================
+    (function createHourNumbers() {
+      const container = document.getElementById('hour-numbers');
+      if (!container) return;
+      const parent = container.closest('.clock-ring--outer');
+      if (!parent) return;
+      for (let i = 0; i < 24; i++) {
+        const angle = (i / 24) * 360 - 90;
+        const rad = angle * Math.PI / 180;
+        const num = document.createElement('span');
+        num.className = 'ring-number';
+        num.textContent = i.toString();
+        const r = 46;
+        num.style.left = (50 + r * Math.cos(rad)) + '%';
+        num.style.top = (50 + r * Math.sin(rad)) + '%';
+        num.style.transform = 'translate(-50%, -50%)';
+        container.appendChild(num);
+      }
+    })();
+
+    // ========================================
+    // Countdown Demo Animation
+    // ========================================
+    // ========================================
+    // Personalize Slot Cycling
+    // ========================================
+    (function slotCycle() {
+      const iconEl = document.getElementById('slot-icon');
+      const textEl = document.getElementById('slot-text');
+      if (!iconEl || !textEl) return;
+      const slots = [
+        { icon: '\u{1F468}\u200D\u{1F469}\u200D\u{1F467}\u200D\u{1F466}', text: 'FAMILY' },
+        { icon: '\u{1F305}', text: 'SCENERY' },
+        { icon: '\u{1F4A1}', text: 'HERO' },
+        { icon: '\u{1F522}', text: 'LUCKY NUMBER' },
+        { icon: '\u{1F31F}', text: 'YOUR DREAM' },
+        { icon: '\u{1F4F8}', text: 'YOUR PHOTO' },
+      ];
+      let idx = 0;
+      setInterval(() => {
+        idx = (idx + 1) % slots.length;
+        iconEl.style.opacity = '0';
+        textEl.style.opacity = '0';
+        setTimeout(() => {
+          iconEl.textContent = slots[idx].icon;
+          textEl.textContent = slots[idx].text;
+          iconEl.style.opacity = '1';
+          textEl.style.opacity = '0.9';
+        }, 300);
+      }, 2500);
+      iconEl.style.transition = 'opacity 0.3s ease';
+      textEl.style.transition = 'opacity 0.3s ease';
+    })();
+
+    // ========================================
+    // Countdown Demo Animation
+    // ========================================
+    (function countdownDemo() {
+      const el = document.getElementById('countdown-demo');
+      const box = document.getElementById('countdown-box');
+      const label = document.getElementById('countdown-label');
+      const zeroText = document.getElementById('countdown-zero-text');
+      if (!el || !box || !label || !zeroText) return;
+      let count = 30;
+      let paused = false;
+      setInterval(() => {
+        if (paused) return;
+        count--;
+        if (count < 0) {
+          count = 30;
+          el.style.color = '';
+          el.style.textShadow = '';
+          el.style.fontSize = '';
+          label.style.display = '';
+          zeroText.classList.remove('show');
+        }
+        el.textContent = count;
+        if (count === 0) {
+          // Flash effect
+          box.classList.remove('flash');
+          void box.offsetWidth;
+          box.classList.add('flash');
+          // Big golden zero
+          el.style.color = '#f0d68a';
+          el.style.textShadow = '0 0 40px rgba(240, 214, 138, 0.8), 0 0 80px rgba(212, 168, 83, 0.5)';
+          el.style.fontSize = '4rem';
+          el.textContent = '00:00';
+          // Swap label
+          label.style.display = 'none';
+          zeroText.classList.add('show');
+          // Pause for 2.5s to let the moment linger
+          paused = true;
+          setTimeout(() => { paused = false; }, 2500);
+        } else if (count <= 5) {
+          el.style.color = '#ff4444';
+          el.style.textShadow = '0 0 30px rgba(255, 68, 68, 0.5)';
+        } else {
+          el.style.color = '';
+          el.style.textShadow = '';
+        }
+      }, 1000);
+    })();
+  </script>
+
+</body>
+</html>
