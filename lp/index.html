@@ -361,45 +361,6 @@
       color: var(--text-accent);
     }
 
-    .problem-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      max-width: 600px;
-      margin: 0 auto 60px;
-    }
-
-    .problem-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 16px;
-      padding: 20px 24px;
-      background: rgba(255, 255, 255, 0.03);
-      border-left: 3px solid var(--gold-dark);
-      border-radius: 0 8px 8px 0;
-    }
-
-    .problem-icon {
-      flex-shrink: 0;
-      width: 24px;
-      height: 24px;
-      background: var(--gold);
-      color: #0a0a12;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.8rem;
-      font-weight: 700;
-      margin-top: 2px;
-    }
-
-    .problem-text {
-      font-size: 1rem;
-      line-height: 1.7;
-    }
-
     .problem-answer {
       text-align: center;
       font-family: 'Noto Serif JP', serif;
@@ -1435,6 +1396,272 @@
     }
 
     /* ========================================
+       Narrative Flow (Problem Section Rewrite)
+       ======================================== */
+    .narrative-text {
+      max-width: 640px;
+      margin: 0 auto;
+      font-size: 1rem;
+      line-height: 2.2;
+      color: var(--text-main);
+    }
+
+    .narrative-text p {
+      margin-bottom: 28px;
+    }
+
+    .narrative-text strong {
+      color: var(--gold);
+    }
+
+    .awareness-insight {
+      background: rgba(212, 168, 83, 0.06);
+      border: 1px solid rgba(212, 168, 83, 0.2);
+      border-radius: 16px;
+      padding: 40px 32px;
+      margin: 48px auto;
+      max-width: 640px;
+      text-align: center;
+    }
+
+    .awareness-insight-label {
+      font-size: 0.8rem;
+      color: var(--text-sub);
+      letter-spacing: 0.15em;
+      margin-bottom: 16px;
+    }
+
+    .awareness-insight-text {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(1.1rem, 3vw, 1.5rem);
+      font-weight: 900;
+      color: var(--gold);
+      line-height: 2;
+    }
+
+    .narrative-emphasis {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+      color: var(--text-accent);
+      font-weight: 700;
+      text-align: center;
+      margin: 48px auto;
+      max-width: 640px;
+      line-height: 2;
+    }
+
+    .narrative-conclusion {
+      text-align: center;
+      max-width: 640px;
+      margin: 48px auto 0;
+      padding: 40px 32px;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .narrative-conclusion p {
+      font-size: 0.95rem;
+      line-height: 2;
+      color: var(--text-main);
+      margin-bottom: 20px;
+    }
+
+    .narrative-conclusion p:last-child {
+      margin-bottom: 0;
+    }
+
+    .narrative-conclusion strong {
+      color: var(--gold);
+    }
+
+    .narrative-conclusion .conclusion-headline {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(1.2rem, 3vw, 1.5rem);
+      font-weight: 900;
+      color: var(--gold);
+      line-height: 1.8;
+      margin-bottom: 0;
+    }
+
+    /* ========================================
+       Comparison Grid (Concept Section)
+       ======================================== */
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+      margin-bottom: 48px;
+    }
+
+    @media (min-width: 600px) {
+      .comparison-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+      }
+    }
+
+    .comparison-card {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 36px 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .comparison-card--old {
+      border: 1px solid rgba(120, 120, 140, 0.15);
+    }
+
+    .comparison-card--old::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, rgba(120, 120, 140, 0.4), transparent);
+    }
+
+    .comparison-card--old h3 {
+      color: rgba(180, 180, 200, 0.7);
+    }
+
+    .comparison-card--new {
+      border: 1px solid rgba(212, 168, 83, 0.2);
+      box-shadow: 0 0 30px rgba(212, 168, 83, 0.05);
+    }
+
+    .comparison-card--new::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .comparison-card h3 {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 1.15rem;
+      margin-bottom: 16px;
+      font-weight: 700;
+    }
+
+    .comparison-card--new h3 {
+      color: var(--gold);
+    }
+
+    .comparison-card p {
+      font-size: 0.93rem;
+      line-height: 1.9;
+      color: var(--text-main);
+    }
+
+    .comparison-card p strong {
+      color: var(--gold);
+    }
+
+    .comparison-label {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      padding: 4px 14px;
+      border-radius: 100px;
+      margin-bottom: 16px;
+    }
+
+    .comparison-label--old {
+      background: rgba(120, 120, 140, 0.15);
+      color: rgba(180, 180, 200, 0.7);
+    }
+
+    .comparison-label--new {
+      background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+      color: #0a0a12;
+    }
+
+    .comparison-vs {
+      display: none;
+    }
+
+    @media (min-width: 600px) {
+      .comparison-vs {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10;
+        width: 48px;
+        height: 48px;
+        background: var(--bg-deep);
+        border-radius: 50%;
+        border: 2px solid rgba(212, 168, 83, 0.3);
+        font-family: 'Noto Serif JP', serif;
+        font-size: 0.8rem;
+        color: var(--gold);
+        font-weight: 700;
+      }
+
+      .comparison-grid {
+        position: relative;
+      }
+    }
+
+    /* Nakaima (中今) Card */
+    .nakaima-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(212, 168, 83, 0.15);
+      border-radius: 16px;
+      padding: 48px 36px;
+      text-align: center;
+      max-width: 640px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .nakaima-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .nakaima-title {
+      font-family: 'Noto Serif JP', serif;
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 900;
+      color: var(--gold);
+      margin-bottom: 8px;
+      letter-spacing: 0.15em;
+    }
+
+    .nakaima-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      margin-bottom: 24px;
+      letter-spacing: 0.08em;
+    }
+
+    .nakaima-card p {
+      font-size: 0.95rem;
+      line-height: 2.2;
+      color: var(--text-main);
+    }
+
+    .nakaima-card strong {
+      color: var(--gold);
+    }
+
+    /* ========================================
        Responsive
        ======================================== */
     @media (max-width: 768px) {
@@ -1456,6 +1683,9 @@
       .repdigit-time { min-width: 90px; padding: 16px 20px; }
       .cta-btn { min-width: 100%; padding: 16px 32px; }
       .gift-card { flex-direction: column; text-align: center; }
+      .awareness-insight { padding: 28px 20px; }
+      .nakaima-card { padding: 36px 24px; }
+      .narrative-conclusion { padding: 28px 20px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -1492,9 +1722,9 @@
     <p class="hero-subtitle">世界にひとつだけの、革命的時計アプリ</p>
 
     <p class="hero-catch">
-      あなたは時間を追いかけていませんか？<br>
-      この時計は違います。<br>
-      <strong>未来があなたのもとへ、流れてくるのです。</strong>
+      あなたは時間を「追いかけて」いませんか？<br>
+      この時計は、その常識を覆します。<br>
+      <strong>針は止まり、未来があなたのもとへ流れてくる。</strong>
     </p>
 
     <div class="hero-cost">
@@ -1515,73 +1745,113 @@
     </div>
   </section>
 
-  <!-- ===================== PROBLEM ===================== -->
+  <!-- ===================== PROBLEM（気づき）===================== -->
   <section class="problem section-spacing">
     <div class="container">
       <h2 class="problem-question fade-in">
-        あなたは今、<br>こんなことを感じていませんか？
+        あなたは<br>「時間の洗脳」に<br>気づいていますか？
       </h2>
 
-      <ul class="problem-list">
-        <li class="problem-item fade-in">
-          <div class="problem-icon">1</div>
-          <p class="problem-text">過去の失敗や後悔に引きずられて、前に進めない</p>
-        </li>
-        <li class="problem-item fade-in">
-          <div class="problem-icon">2</div>
-          <p class="problem-text">「なんとなく運が悪い」と感じる日が続いている</p>
-        </li>
-        <li class="problem-item fade-in">
-          <div class="problem-icon">3</div>
-          <p class="problem-text">ゾロ目や幸運のサインに気づいても、すぐに忘れてしまう</p>
-        </li>
-        <li class="problem-item fade-in">
-          <div class="problem-icon">4</div>
-          <p class="problem-text">自分の未来に対して、漠然とした不安がある</p>
-        </li>
-        <li class="problem-item fade-in">
-          <div class="problem-icon">5</div>
-          <p class="problem-text">毎日の生活に「特別な瞬間」がない</p>
-        </li>
-      </ul>
+      <div class="narrative-text fade-in">
+        <p>
+          考えてみてください。<br>
+          あなたがこれまで見てきた時計は、すべて同じ仕組みです。<br>
+          <strong>針が前に進み、過ぎた時間を後ろに捨てていく。</strong>
+        </p>
+        <p>
+          「遅刻する」「間に合わない」「もう時間がない」——<br>
+          あなたは生まれてからずっと、<br>
+          <strong>時間を追いかける人生</strong>を歩まされてきました。
+        </p>
+      </div>
 
-      <p class="problem-answer fade-in">
-        その原因は、<br>
-        あなたの<strong>「時間の捉え方」</strong>にあるかもしれません。
+      <div class="awareness-insight fade-in">
+        <div class="awareness-insight-label">&#9650; ここで、ひとつ質問です &#9650;</div>
+        <div class="awareness-insight-text">
+          「明日」を体験したことがある人は、<br>
+          人類史上、一人もいません。
+        </div>
+      </div>
+
+      <div class="narrative-text fade-in">
+        <p>
+          明日になって目が覚めたら、それは「今日」です。<br>
+          あなたが体験しているのは、常に<strong>「今」</strong>だけ。
+        </p>
+        <p>
+          過去は記憶。未来は想像。<br>
+          私たちが本当に生きているのは、<strong>この瞬間だけ</strong>なのです。
+        </p>
+      </div>
+
+      <p class="narrative-emphasis fade-in">
+        それなのに、ほとんどの人は——<br>
+        過去を悔やみ、未来を心配して、<br>
+        <strong>「今」を取り逃しています。</strong>
       </p>
+
+      <div class="narrative-conclusion fade-in">
+        <p>
+          その原因が、あなたの目の前にある<strong>「時計」</strong>です。
+        </p>
+        <p>
+          針が前へ前へと進む時計は、あなたにこう囁き続けています。<br>
+          <em>「早くしろ。時間が過ぎていく。置いていかれるぞ。」</em>
+        </p>
+        <p class="conclusion-headline">
+          これが、時計による「洗脳」です。
+        </p>
+      </div>
     </div>
   </section>
 
   <!-- ===================== CONCEPT ===================== -->
   <section class="concept section-spacing">
     <div class="container">
-      <h2 class="concept-heading fade-in">時間の常識を、覆す。</h2>
-      <p class="concept-sub fade-in">従来の時計が語らなかった、もうひとつの真実</p>
+      <h2 class="concept-heading fade-in">洗脳を解く時計。</h2>
+      <p class="concept-sub fade-in">ふたつの時計を、比べてみてください</p>
+
+      <div class="comparison-grid fade-in">
+        <div class="comparison-vs">VS</div>
+        <div class="comparison-card comparison-card--old">
+          <span class="comparison-label comparison-label--old">従来の時計</span>
+          <h3>あなたが時間を追いかける</h3>
+          <p>
+            針が過去から未来へ進んでいく。<br>
+            あなたは過去を捨て、未来を追いかけ続ける。<br><br>
+            いつも「間に合わない」「遅れている」と感じる。<br>
+            過去への後悔と、未来への不安。<br><br>
+            <em>あなたは時間に支配されています。</em>
+          </p>
+        </div>
+
+        <div class="comparison-card comparison-card--new">
+          <span class="comparison-label comparison-label--new">未来時計</span>
+          <h3>未来があなたに向かってくる</h3>
+          <p>
+            <strong>針（＝あなた）は止まっている。</strong><br>
+            文字盤が回転し、未来のほうからあなたのもとへ流れてくる。<br><br>
+            あなたは動かなくていい。<br>
+            未来に種をまけば、その果実は<strong>自動的にあなたのもとへやってくる。</strong><br><br>
+            <strong>あなたは時間から解放されます。</strong>
+          </p>
+        </div>
+      </div>
 
       <div class="concept-block">
         <div class="concept-card fade-in">
           <div class="concept-card-number">01</div>
-          <h3>従来の時計 &#8212; あなたが過去を捨てて、未来へ向かう</h3>
+          <h3>笑う門には福来る &#8212; 今の意識が未来を決める</h3>
           <p>
-            普通の時計は、針が前に進みます。<br>
-            つまり「あなたが過去を置き去りにして、未来へ歩いていく」という世界観です。<br>
-            そこには常に、置いてきた過去への未練と、追いかける未来への焦りがあります。
+            今この瞬間に感謝し、喜びの中にいれば、<br>
+            良きタイムラインの未来につながっていく。<br>
+            逆に、不安や焦りの中にいれば、そのまま暗い未来へと向かう。<br><br>
+            <strong>未来時計は「今」の意識を変えることで、あなたの未来そのものを変えます。</strong>
           </p>
         </div>
 
         <div class="concept-card fade-in">
           <div class="concept-card-number">02</div>
-          <h3>未来時計 &#8212; 未来が、あなたに向かってくる</h3>
-          <p>
-            未来時計は、針は動きません。文字盤が回転します。<br>
-            あなたは動かなくていい。<strong>未来のほうから、あなたのもとへ流れてくるのです。</strong><br>
-            あなたが心に描いた未来は、必ずやってきます。<br>
-            過去にとらわれる必要はありません。未来を意識するだけで、その未来は手に入るのです。
-          </p>
-        </div>
-
-        <div class="concept-card fade-in">
-          <div class="concept-card-number">03</div>
           <h3>24時間の未来が、常に見える</h3>
           <p>
             3層の同心円リングが、時・分・秒を同時に表示。<br>
@@ -1589,6 +1859,19 @@
             あなたの1日の未来が、文字通り「見える」のです。
           </p>
         </div>
+      </div>
+
+      <div class="nakaima-card fade-in">
+        <div class="nakaima-title">中今</div>
+        <div class="nakaima-subtitle">&#8212; なかいま &#8212;</div>
+        <p>
+          日本には古くから<strong>「中今」</strong>という叡智があります。<br><br>
+          過去を悔やまず、未来を心配せず、<br>
+          今この瞬間に感謝して生きる。<br><br>
+          今を本当に生きること。<br>
+          その連続こそが、最高の人生になる。<br><br>
+          未来時計は、この<strong>「中今」の精神を形にした時計</strong>です。
+        </p>
       </div>
     </div>
   </section>
@@ -1858,21 +2141,23 @@
     <div class="container">
       <div class="philosophy-quote fade-in">
         <blockquote>
-          過去にとらわれる必要はない。<br>
-          未来を夢見れば、<br>
-          未来を意識すれば、<br>
-          未来にこうなりたい、こうしたい、こうしようと思えば、<br>
-          必ずそれは得られる。
+          腹を決めた瞬間、未来は生まれる。<br>
+          その未来に、現れる前から感謝する。<br>
+          そうすれば、最高最善の今の延長上に、<br>
+          楽しき明るき未来が待っている。
         </blockquote>
 
         <p class="philosophy-text">
-          未来時計は、単なる時計アプリではありません。<br><br>
-          <strong>あなたの人生の時間の捉え方を根本から変える</strong>ツールです。<br><br>
+          未来時計は、時刻を知るための道具ではありません。<br><br>
+          <strong>あなたの「時間に対する意識」を根本から変える、<br>
+          マインドセットの装置</strong>です。<br><br>
+          普通の時計は、あなたにこう教えてきました。<br>
+          「過去から未来へ進め。時間を追いかけろ。」<br><br>
+          未来時計は、あなたにこう語りかけます。<br>
+          <strong>「あなたは止まっていい。未来はあなたのもとへ来る。」</strong><br><br>
           毎日、未来があなたに向かってくるのを見つめてください。<br>
-          ゾロ目のゴールドの光を受け取ってください。<br>
-          カウントダウンとともに、幸運を迎え入れてください。<br><br>
-          そうすることで、あなたの現実は変わり始めます。<br>
-          <strong>あなたが思い描いた未来が、必ず訪れます。</strong>
+          その瞬間、あなたは気づくでしょう——<br>
+          <strong>追いかける必要なんて、最初からなかったのだと。</strong>
         </p>
       </div>
     </div>
