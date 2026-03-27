@@ -80,6 +80,12 @@ export async function showContextMenu(): Promise<void> {
       action: () => { void handleAlwaysOnTopToggle(); },
     });
 
+    const changeImageItem = await MenuItem.new({
+      id: "change-image",
+      text: "真ん中の画像・動画を変更 (または時計をダブルクリック)",
+      action: () => { document.getElementById("bg-file-input")?.click(); },
+    });
+
     const separator = await PredefinedMenuItem.new({
       item: "Separator",
     });
@@ -91,7 +97,7 @@ export async function showContextMenu(): Promise<void> {
     });
 
     const menu = await Menu.new({
-      items: [alwaysOnTopItem, separator, quitItem],
+      items: [alwaysOnTopItem, changeImageItem, separator, quitItem],
     });
 
     await menu.popup();

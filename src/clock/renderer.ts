@@ -35,7 +35,7 @@ export function getRepdigitCountdown(state: ClockState): RepdigitCountdown | nul
     let diff = t.hours * 3600 + t.minutes * 60 - nowSec;
     if (diff <= 0) diff += 86400;
     if (diff <= COUNTDOWN_SEC && (!best || diff < best.secondsLeft)) {
-      const label = `${String(t.hours).padStart(2, "0")}:${String(t.minutes).padStart(2, "0")}`;
+      const label = `${t.hours}:${t.minutes}`;
       best = { secondsLeft: diff, targetLabel: label };
     }
   }
@@ -376,24 +376,35 @@ export function drawNeedle(
   radius: number,
 ): void {
   const tipY = cy - radius * 0.97;
+  const baseY = cy - (radius * 0.32); // Slightly outside innerRadius (0.30)
 
+  ctx.save();
+  ctx.shadowColor = "rgba(255, 140, 40, 0.5)";
+  ctx.shadowBlur = 8;
+  ctx.shadowOffsetY = 2;
+
+  // Main needle line
   ctx.beginPath();
-  ctx.moveTo(cx, cy);
+  ctx.moveTo(cx, baseY);
   ctx.lineTo(cx, tipY);
-  ctx.strokeStyle = NEEDLE_COLOR;
-  ctx.lineWidth = 2;
+  ctx.strokeStyle = "rgba(230, 90, 20, 0.95)";
+  ctx.lineWidth = 3.5;
   ctx.lineCap = "round";
   ctx.stroke();
 
+  // Tip dot
   ctx.beginPath();
-  ctx.arc(cx, tipY, 2.5, 0, TWO_PI);
-  ctx.fillStyle = NEEDLE_DOT_COLOR;
+  ctx.arc(cx, tipY, 3.5, 0, TWO_PI);
+  ctx.fillStyle = "rgba(255, 120, 30, 1.0)";
   ctx.fill();
 
+  // Base dot (near the image edge)
   ctx.beginPath();
-  ctx.arc(cx, cy, 3, 0, TWO_PI);
-  ctx.fillStyle = NEEDLE_DOT_COLOR;
+  ctx.arc(cx, baseY, 3.5, 0, TWO_PI);
+  ctx.fillStyle = "rgba(255, 120, 30, 1.0)";
   ctx.fill();
+
+  ctx.restore();
 }
 
 const WIN_BG = "rgba(255, 248, 230, 0.85)";
@@ -447,7 +458,7 @@ function drawWindow(
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillStyle = WIN_TEXT;
-  ctx.fillText(String(value).padStart(2, "0"), x, y);
+  ctx.fillText(String(value), x, y);
 }
 
 function drawRoundRect(

@@ -17,7 +17,7 @@ import {
   drawRepdigitCountdown,
 } from "./clock/renderer";
 import { drawBackground } from "./clock/background";
-import { drawCenterMedia } from "./clock/centerMedia";
+import { drawCenterMedia, setCenterMedia, updateCenterMediaTransform } from "./clock/centerMedia";
 import { initAlwaysOnTop, showContextMenu } from "./menu/contextMenu";
 import { checkForUpdates } from "./updater";
 
@@ -109,3 +109,109 @@ document.addEventListener("contextmenu", (e) => {
 
 void initAlwaysOnTop();
 void checkForUpdates();
+
+window.addEventListener("dragover", (e) => {
+  e.preventDefault();
+});
+
+window.addEventListener("drop", (e) => {
+  e.preventDefault();
+  const file = e.dataTransfer?.files[0];
+  if (!file) return;
+
+  const url = URL.createObjectURL(file);
+  if (file.type.startsWith("image/")) {
+    setCenterMedia({ type: "image", src: url });
+  } else if (file.type.startsWith("video/")) {
+    setCenterMedia({ type: "video", src: url });
+  }
+});
+
+const fileInput = document.getElementById("bg-file-input") as HTMLInputElement;
+if (fileInput) {
+  fileInput.addEventListener("change", (e) => {
+    const target = e.target as HTMLInputElement;
+    const file = target.files?.[0];
+    if (!file) return;
+
+    const url = URL.createObjectURL(file);
+    if (file.type.startsWith("image/")) {
+      setCenterMedia({ type: "image", src: url });
+    } else if (file.type.startsWith("video/")) {
+      setCenterMedia({ type: "video", src: url });
+    }
+    target.value = "";
+  });
+}
+
+canvas.addEventListener("dblclick", () => {
+  fileInput?.click();
+});
+
+let isDraggingMedia = false;
+let lastX = 0;
+let lastY = 0;
+
+canvas.addEventListener("pointerdown", (e) => {
+  const { width, height } = dimensions;
+  const cx = width / 2;
+  const cy = height / 2;
+  const radius = Math.min(cx, cy) * 0.85;
+  const innerRadius = radius * 0.30;
+  
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  
+  const dx = mx - cx;
+  const dy = my - cy;
+  if (Math.sqrt(dx * dx + dy * dy) <= innerRadius) {
+    isDraggingMedia = true;
+    lastX = mx;
+    lastY = my;
+    try {
+      canvas.setPointerCapture(e.pointerId);
+    } catch(err) {}
+  }
+});
+
+canvas.addEventListener("pointermove", (e) => {
+  if (isDraggingMedia) {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
+    
+    const dx = mx - lastX;
+    const dy = my - lastY;
+    
+    updateCenterMediaTransform(dx, dy, 1.0);
+    lastX = mx;
+    lastY = my;
+  }
+});
+
+canvas.addEventListener("pointerup", (e) => {
+  isDraggingMedia = false;
+  try {
+    canvas.releasePointerCapture(e.pointerId);
+  } catch(err) {}
+});
+
+canvas.addEventListener("wheel", (e) => {
+  const { width, height } = dimensions;
+  const cx = width / 2;
+  const cy = height / 2;
+  const radius = Math.min(cx, cy) * 0.85;
+  const innerRadius = radius * 0.30;
+  
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left;
+  const my = e.clientY - rect.top;
+  const dx = mx - cx;
+  const dy = my - cy;
+  
+  if (Math.sqrt(dx * dx + dy * dy) <= innerRadius) {
+    const zoomFactor = e.deltaY > 0 ? 0.92 : 1.08;
+    updateCenterMediaTransform(0, 0, zoomFactor);
+  }
+}, { passive: true });

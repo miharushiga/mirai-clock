@@ -8,6 +8,18 @@ let imageReady = false;
 let videoElement: HTMLVideoElement | null = null;
 let videoReady = false;
 
+let mediaScale = 1.0;
+let mediaOffsetX = 0;
+let mediaOffsetY = 0;
+
+export function updateCenterMediaTransform(dx: number, dy: number, dScale: number): void {
+  mediaOffsetX += dx;
+  mediaOffsetY += dy;
+  mediaScale *= dScale;
+  if (mediaScale < 0.2) mediaScale = 0.2;
+  if (mediaScale > 15) mediaScale = 15;
+}
+
 function clearMedia(): void {
   cachedImage = null;
   imageReady = false;
@@ -58,6 +70,9 @@ function loadVideo(src: string): void {
 export function setCenterMedia(config: CenterMediaConfig): void {
   clearMedia();
   currentConfig = { ...config };
+  mediaScale = 1.0;
+  mediaOffsetX = 0;
+  mediaOffsetY = 0;
 
   if (config.type === "none" || !config.src) return;
 
@@ -80,26 +95,22 @@ function drawCoverSource(
   if (sourceW === 0 || sourceH === 0) return;
   const diameter = innerRadius * 2;
   const srcRatio = sourceW / sourceH;
-  const dstRatio = 1;
 
-  let srcX = 0;
-  let srcY = 0;
-  let srcW = sourceW;
-  let srcH = sourceH;
+  let dstW = diameter;
+  let dstH = diameter;
 
-  if (srcRatio > dstRatio) {
-    srcW = sourceH;
-    srcX = (sourceW - srcW) / 2;
+  if (srcRatio > 1) {
+    dstW = diameter * srcRatio;
+    dstH = diameter;
   } else {
-    srcH = sourceW;
-    srcY = (sourceH - srcH) / 2;
+    dstW = diameter;
+    dstH = diameter / srcRatio;
   }
 
-  ctx.drawImage(
-    source,
-    srcX, srcY, srcW, srcH,
-    cx - innerRadius, cy - innerRadius, diameter, diameter,
-  );
+  const dstX = cx - dstW / 2;
+  const dstY = cy - dstH / 2;
+
+  ctx.drawImage(source, dstX, dstY, dstW, dstH);
 }
 
 export function drawCenterMedia(
@@ -115,10 +126,14 @@ export function drawCenterMedia(
     ctx.beginPath();
     ctx.arc(cx, cy, innerRadius, 0, TWO_PI);
     ctx.clip();
+
+    ctx.translate(cx + mediaOffsetX, cy + mediaOffsetY);
+    ctx.scale(mediaScale, mediaScale);
+
     drawCoverSource(
       ctx, cachedImage,
       cachedImage.naturalWidth, cachedImage.naturalHeight,
-      cx, cy, innerRadius,
+      0, 0, innerRadius,
     );
     ctx.restore();
     return;
@@ -129,10 +144,14 @@ export function drawCenterMedia(
     ctx.beginPath();
     ctx.arc(cx, cy, innerRadius, 0, TWO_PI);
     ctx.clip();
+
+    ctx.translate(cx + mediaOffsetX, cy + mediaOffsetY);
+    ctx.scale(mediaScale, mediaScale);
+
     drawCoverSource(
       ctx, videoElement,
       videoElement.videoWidth, videoElement.videoHeight,
-      cx, cy, innerRadius,
+      0, 0, innerRadius,
     );
     ctx.restore();
   }
