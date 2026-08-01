@@ -4,21 +4,22 @@ import { MenuItem } from "@tauri-apps/api/menu";
 import { PredefinedMenuItem } from "@tauri-apps/api/menu";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { listen } from "@tauri-apps/api/event";
-import { load } from "@tauri-apps/plugin-store";
-
-const STORE_PATH = "settings.json";
-const STORE_KEY = "alwaysOnTop";
+import { ALWAYS_ON_TOP_KEY, getSettingsStore } from "../store/settings";
+import {
+  clearBackgroundMedia,
+  clearCenterMedia,
+  hasBackgroundMedia,
+  hasCenterMedia,
+  pickBackgroundMedia,
+  pickCenterMedia,
+} from "../media/mediaSettings";
 
 let alwaysOnTopState = false;
 
-async function getStore() {
-  return load(STORE_PATH, { defaults: { [STORE_KEY]: false } });
-}
-
 async function loadAlwaysOnTop(): Promise<boolean> {
   try {
-    const store = await getStore();
-    const value = await store.get<boolean>(STORE_KEY);
+    const store = await getSettingsStore();
+    const value = await store.get<boolean>(ALWAYS_ON_TOP_KEY);
     return typeof value === "boolean" ? value : false;
   } catch (e) {
     console.error("[未来時計] Failed to load alwaysOnTop:", e);
@@ -28,12 +29,45 @@ async function loadAlwaysOnTop(): Promise<boolean> {
 
 async function saveAlwaysOnTop(value: boolean): Promise<void> {
   try {
-    const store = await getStore();
-    await store.set(STORE_KEY, value);
+    const store = await getSettingsStore();
+    await store.set(ALWAYS_ON_TOP_KEY, value);
     await store.save();
   } catch (e) {
     console.error("[未来時計] Failed to save alwaysOnTop:", e);
   }
+}
+
+function runMediaAction(label: string, action: () => Promise<void>): void {
+  void action().catch((e: unknown) => {
+    console.error(`[未来時計] ${label} failed:`, e);
+  });
+}
+
+async function buildMediaItems(): Promise<MenuItem[]> {
+  return Promise.all([
+    MenuItem.new({
+      id: "set-center-media",
+      text: "中央に画像・動画を設定…",
+      action: () => { runMediaAction("Set center media", pickCenterMedia); },
+    }),
+    MenuItem.new({
+      id: "clear-center-media",
+      text: "中央を解除",
+      enabled: hasCenterMedia(),
+      action: () => { runMediaAction("Clear center media", clearCenterMedia); },
+    }),
+    MenuItem.new({
+      id: "set-background-media",
+      text: "背景に画像・動画を設定…",
+      action: () => { runMediaAction("Set background media", pickBackgroundMedia); },
+    }),
+    MenuItem.new({
+      id: "clear-background-media",
+      text: "背景を解除",
+      enabled: hasBackgroundMedia(),
+      action: () => { runMediaAction("Clear background media", clearBackgroundMedia); },
+    }),
+  ]);
 }
 
 async function handleAlwaysOnTopToggle(): Promise<void> {
@@ -80,7 +114,12 @@ export async function showContextMenu(): Promise<void> {
       action: () => { void handleAlwaysOnTopToggle(); },
     });
 
+    const mediaItems = await buildMediaItems();
+
     const separator = await PredefinedMenuItem.new({
+      item: "Separator",
+    });
+    const separator2 = await PredefinedMenuItem.new({
       item: "Separator",
     });
 
@@ -91,7 +130,7 @@ export async function showContextMenu(): Promise<void> {
     });
 
     const menu = await Menu.new({
-      items: [alwaysOnTopItem, separator, quitItem],
+      items: [...mediaItems, separator, alwaysOnTopItem, separator2, quitItem],
     });
 
     await menu.popup();

@@ -6,6 +6,43 @@ use tauri::{
 };
 use tauri_plugin_store::StoreExt;
 
+/// ユーザーが選んだファイルだけを asset プロトコルの許可対象に加える。
+/// フォルダ単位の権限を渡さないため、閲覧できるのは常に選択済みファイルのみ。
+#[tauri::command]
+fn allow_media_file(app: tauri::AppHandle, path: String) -> Result<(), String> {
+    app.asset_protocol_scope()
+        .allow_file(&path)
+        .map_err(|e| {
+            error!("Failed to allow media file {}: {}", path, e);
+            e.to_string()
+        })
+}
+
+/// ウィンドウを確実に目に見える状態へ戻す。
+/// フルスクリーン（別 Space に隔離される）・非表示・最小化のいずれからも復帰させる。
+fn show_main_window(app: &tauri::AppHandle) {
+    let Some(window) = app.get_webview_window("main") else {
+        warn!("main window not found");
+        return;
+    };
+
+    if window.is_fullscreen().unwrap_or(false) {
+        warn!("Window was fullscreen; exiting fullscreen");
+        if let Err(e) = window.set_fullscreen(false) {
+            error!("Failed to exit fullscreen: {}", e);
+        }
+    }
+    if let Err(e) = window.unminimize() {
+        warn!("Failed to unminimize window: {}", e);
+    }
+    if let Err(e) = window.show() {
+        warn!("Failed to show window: {}", e);
+    }
+    if let Err(e) = window.set_focus() {
+        warn!("Failed to set focus: {}", e);
+    }
+}
+
 fn setup_tray(app: &tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     let stored_on_top = app
         .store("settings.json")
@@ -90,12 +127,7 @@ fn toggle_window_visibility(app: &tauri::AppHandle) {
                 warn!("Failed to hide window: {}", e);
             }
         } else {
-            if let Err(e) = window.show() {
-                warn!("Failed to show window: {}", e);
-            }
-            if let Err(e) = window.set_focus() {
-                warn!("Failed to set focus: {}", e);
-            }
+            show_main_window(app);
         }
     }
 }
@@ -121,7 +153,20 @@ pub fn run() {
         log::LevelFilter::Warn
     };
 
-    let app = tauri::Builder::default()
+    #[allow(unused_mut)]
+    let mut builder = tauri::Builder::default();
+
+    // 二重起動しようとしたら、新規プロセスを立てずに既存ウィンドウを復帰させる。
+    #[cfg(desktop)]
+    {
+        builder = builder.plugin(tauri_plugin_single_instance::init(|app, _argv, _cwd| {
+            info!("Second instance launched; restoring window");
+            show_main_window(app);
+        }));
+    }
+
+    let app = builder
+        .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_store::Builder::default().build())
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_process::init())
@@ -130,8 +175,19 @@ pub fn run() {
                 .level(log_level)
                 .build(),
         )
+        .invoke_handler(tauri::generate_handler![allow_media_file])
         .setup(|app| {
             setup_tray(app)?;
+            // 前回終了時にフルスクリーンだった場合、macOS が状態を復元して
+            // 別 Space に隔離され「起動しているのに見えない」状態になるため、起動時に必ず解除する。
+            if let Some(window) = app.get_webview_window("main") {
+                if window.is_fullscreen().unwrap_or(false) {
+                    warn!("Restored in fullscreen; forcing windowed mode");
+                    if let Err(e) = window.set_fullscreen(false) {
+                        error!("Failed to exit fullscreen on startup: {}", e);
+                    }
+                }
+            }
             Ok(())
         })
         .on_window_event(|window, event| {
@@ -145,9 +201,12 @@ pub fn run() {
         .build(tauri::generate_context!())
         .expect("error while building tauri application");
 
-    app.run(|app_handle, event| {
-        if let RunEvent::ExitRequested { .. } = &event {
-            save_store(app_handle);
-        }
+    app.run(|app_handle, event| match &event {
+        RunEvent::ExitRequested { .. } => save_store(app_handle),
+        // macOS では Dock / Finder から再度開いても新しいプロセスは起動せず、
+        // 実行中のアプリに Reopen が届くだけ。ここで拾わないと非表示のまま戻せなくなる。
+        #[cfg(target_os = "macos")]
+        RunEvent::Reopen { .. } => show_main_window(app_handle),
+        _ => {}
     });
 }

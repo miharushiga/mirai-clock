@@ -17,9 +17,12 @@ export interface RingRotations {
   second: number;
 }
 
+export type MediaKind = "image" | "video";
+
+/** 描画に使うメディア。src が null なら既定の見た目にフォールバックする。 */
 export interface BackgroundConfig {
-  imagePath: string | null;
-  fallbackColor: string;
+  src: string | null;
+  kind: MediaKind | null;
 }
 
 export interface UserSettings {
@@ -32,8 +35,14 @@ export interface AppConfig {
 }
 
 export interface CenterMediaConfig {
-  type: "image" | "video" | "none";
   src: string | null;
+  kind: MediaKind | null;
+}
+
+/** ユーザーが選んだファイルのパス。asset URL ではなく実パスを保存する。 */
+export interface MediaSettings {
+  centerMediaPath: string | null;
+  backgroundMediaPath: string | null;
 }
 
 export interface RepdigitCountdown {

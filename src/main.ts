@@ -19,6 +19,7 @@ import {
 import { drawBackground } from "./clock/background";
 import { drawCenterMedia } from "./clock/centerMedia";
 import { initAlwaysOnTop, showContextMenu } from "./menu/contextMenu";
+import { initMedia } from "./media/mediaSettings";
 import { checkForUpdates } from "./updater";
 
 window.addEventListener("unhandledrejection", (event) => {
@@ -108,4 +109,7 @@ document.addEventListener("contextmenu", (e) => {
 });
 
 void initAlwaysOnTop();
+void initMedia().catch((e: unknown) => {
+  console.error("[未来時計] Failed to restore saved images:", e);
+});
 void checkForUpdates();
