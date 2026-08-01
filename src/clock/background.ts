@@ -1,67 +1,16 @@
 import type { BackgroundConfig } from "../types";
+import { computeCoverCrop } from "./cover";
+import { EMPTY_MEDIA, loadMedia, type LoadedMedia } from "./mediaSource";
 
-const DEFAULT_CONFIG: BackgroundConfig = {
-  imagePath: null,
-  fallbackColor: "#e8d5b0",
-};
-
-let backgroundImage: HTMLImageElement | null = null;
-let currentConfig: BackgroundConfig = { ...DEFAULT_CONFIG };
-let imageLoaded = false;
+let media: LoadedMedia = EMPTY_MEDIA;
 
 let cachedCanvas: OffscreenCanvas | null = null;
 let cachedWidth = 0;
 let cachedHeight = 0;
 
-export function setBackgroundConfig(config: Partial<BackgroundConfig>): void {
-  currentConfig = { ...currentConfig, ...config };
-  if (config.imagePath !== undefined) {
-    loadBackgroundImage(currentConfig.imagePath);
-  }
-}
-
-function loadBackgroundImage(path: string | null): void {
-  imageLoaded = false;
-  backgroundImage = null;
-
-  if (!path) return;
-
-  const img = new Image();
-  img.onload = () => {
-    backgroundImage = img;
-    imageLoaded = true;
-  };
-  img.onerror = () => {
-    backgroundImage = null;
-    imageLoaded = false;
-  };
-  img.src = path;
-}
-
-function drawCoverImage(
-  ctx: CanvasRenderingContext2D,
-  img: HTMLImageElement,
-  canvasWidth: number,
-  canvasHeight: number,
-): void {
-  if (img.height === 0 || canvasHeight === 0) return;
-  const imgRatio = img.width / img.height;
-  const canvasRatio = canvasWidth / canvasHeight;
-
-  let srcX = 0;
-  let srcY = 0;
-  let srcW = img.width;
-  let srcH = img.height;
-
-  if (imgRatio > canvasRatio) {
-    srcW = img.height * canvasRatio;
-    srcX = (img.width - srcW) / 2;
-  } else {
-    srcH = img.width / canvasRatio;
-    srcY = (img.height - srcH) / 2;
-  }
-
-  ctx.drawImage(img, srcX, srcY, srcW, srcH, 0, 0, canvasWidth, canvasHeight);
+export function setBackgroundConfig(config: BackgroundConfig): void {
+  media.dispose();
+  media = loadMedia(config.src, config.kind);
 }
 
 function generateParchmentTexture(width: number, height: number): OffscreenCanvas {
@@ -177,9 +126,13 @@ export function drawBackground(
   width: number,
   height: number,
 ): void {
-  if (imageLoaded && backgroundImage) {
-    drawCoverImage(ctx, backgroundImage, width, height);
-    return;
+  const ready = media.current();
+  if (ready) {
+    const crop = computeCoverCrop(ready.width, ready.height, width, height);
+    if (crop) {
+      ctx.drawImage(ready.source, crop.sx, crop.sy, crop.sw, crop.sh, 0, 0, width, height);
+      return;
+    }
   }
 
   if (!cachedCanvas || cachedWidth !== width || cachedHeight !== height) {
